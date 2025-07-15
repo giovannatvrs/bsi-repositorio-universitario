@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../css/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
@@ -25,9 +25,9 @@
         </div>
         <div id="login">
             <div id="logo-login">
-                <img src="fotos/bsi-logo.png" alt="Logo do BSI UNIRIO" />
+                <img src="../fotos/bsi-logo.png" alt="Logo do BSI UNIRIO" />
                 <h1>
-                    <span class="linha1">REPOSITÓRIO</span>
+                    <span class="linha1">REPOSITÓRIO</span><br>
                     <span class="linha2">UNIVERSITÁRIO</span>
                 </h1>
             </div>
@@ -43,5 +43,34 @@
             </div>
         </div>
     </div>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+  <script>
+    function handleCredentialResponse(response) {
+      const token = response.credential;
+      const decodedToken = parseJwt(token);
+      console.log(decodedToken);
+    }
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "798904101516-j8bksfbplacea3cu31dj3q8e4f9smjsp.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }
+      );
+      google.accounts.id.prompt();
+    }
+  </script>
 </body>
 </html>
