@@ -1,3 +1,152 @@
+*{
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    border: 0;
+
+}
+
+ 
+
+body{
+
+    background-color: #f9fbfc;
+
+    font-family:  "Inter", sans-serif;
+
+}
+
+ 
+
+a{
+
+    text-decoration: none;
+
+    color: inherit;
+
+}
+
+ 
+
+h1{
+
+    font-family: "League Spartan", sans-serif;
+
+    color: white;
+
+    font-style: normal;
+
+    font-weight: 400;
+
+    margin: 0;
+
+    font-size: 25px;
+
+    margin-top: 13px;
+
+}
+
+ 
+
+h1 span{
+
+    display: block;
+
+}
+
+ 
+
+header{
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background-color: rgba(90, 113, 188, 1);
+
+    height: 120px;
+
+    color: white;
+
+    max-width: 100%;
+
+    padding: 16px 24px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+}
+
+#link-login{
+    font-size: 1rem;
+    font-weight: 500;
+}
+ 
+
+.logo{
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    
+
+}
+
+ 
+
+img{
+
+    height: 60px;
+
+}
+
+aside{
+    width: 18%;
+}
+
+#conteudo{
+    padding: 5%;
+}
+
+#novo{
+
+    background-color: rgba(32, 65, 173, 1);
+    color: white;
+    
+    font-weight: 400;
+    height: 40px;
+    width: 60%;
+    border-radius: 5px;
+
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: all 0.5s;
+    box-shadow: 2px 2px 3px #777777;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+
+}
+
+ 
+
+#novo:hover{
+
+    background-color: rgba(42, 86, 229, 1);
+
+}
+
+
 body{
     font-family: Inter;
 }
@@ -112,7 +261,7 @@ body{
 
     width: 45%;
 
-    
+    height: auto;
 
     display: flex;
 
@@ -155,6 +304,8 @@ body{
 
     margin-left: -25px;
 
+    margin-right: 30px;
+
     font-size: 20px;
 
     margin-bottom: 5px;    
@@ -172,7 +323,7 @@ body{
  
 
 #form-login{
-
+    width: 90%;
     text-align: center;
 
 }
@@ -181,12 +332,12 @@ body{
 
 #form-login h2{
 
-    font-weight: 400;
+    font-weight: 300;
 
     font-size: 35px;
 
     margin-bottom: 50px;
-
+    
 }
 
  
@@ -287,9 +438,16 @@ fieldset legend {
         display: none;
     }
     #login{
+        height: 100%;
         width: 100%;
     }
     #logo-login{
         margin-top: 10px;
+    }
+    fieldset{
+        margin: 0;
+    }
+    #logo-login h1{
+        margin: 0;
     }
 }
