@@ -13,7 +13,7 @@
  
 
 body{
-
+    color: #333;
     background-color: #f9fbfc;
 
     font-family:  "Inter", sans-serif;
@@ -25,8 +25,8 @@ body{
 a{
 
     text-decoration: none;
-
     color: inherit;
+    cursor: pointer;
 
 }
 
@@ -110,12 +110,26 @@ img{
 
 }
 
-aside{
-    width: 18%;
+#container{
+    display: flex;
+    flex-direction: row;
 }
 
-#conteudo{
-    padding: 5%;
+aside{
+    width: 250px;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+    height: 100vh;
+}
+
+
+
+#main{
+    padding: 30px;
 }
 
 #novo{
@@ -125,12 +139,13 @@ aside{
     font-size: 18px;
     font-weight: 400;
     height: 60px;
-    width: 70%;
+    width: 80%;
     border-radius: 5px;
-    margin: 30px 0 30px 0;
+    margin-top:10%;
+    margin-bottom: 10%;
     cursor: pointer;
     transition: all 0.5s;
-    box-shadow: 2px 2px 3px #777777;
+    
     display: flex;
     justify-content: center;
     align-items: center;    
@@ -145,9 +160,81 @@ aside{
 
 }
 
+#btn-disciplinas{
+    font-weight: 500;
+    color:#0d47a1;
+    margin-bottom: 5px;
+}
 
-body{
-    font-family: Inter;
+#btn-disciplinas:hover{
+    background-color: rgb(255, 255, 255);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#lista-disciplinas{
+    font-family: "Segoe UI", "Segoe", "SegoeUI-Regular-final", Tahoma, Helvetica, Arial, sans-serif;
+    max-height: 250px;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #90caf9 #ffff;
+    transition: max-height 0.4s ease;
+}
+
+#lista-disciplinas ul li{
+    list-style-type: none;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+#lista-disciplinas ul li:hover{
+    cursor: pointer;
+    background-color: #e3f2fd;
+    border-radius: 6px;
+}
+
+
+
+#lista-disciplinas::-webkit-scrollbar-thumb{
+    background-color: #90caf9;
+}
+
+
+#main{
+    width: 100%;
+}
+h2{
+    color: #0d47a1;
+    margin-bottom: 20px;
+}
+
+
+table{
+    width: 100%;
+    text-align: justify;
+    font-family: "Segoe UI", "Segoe", "SegoeUI-Regular-final", Tahoma, Helvetica, Arial, sans-serif;
+    border-spacing: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+
+
+table th{
+    background-color: #e3f2fd;;
+    color: #0d47a1;
+    font-weight: 600;
+
+}
+
+table th, table td{
+    padding: 14px 18px;
+   
+}
+
+table th:hover{
+    background-color: #cde8ff;
+    cursor: pointer;
 }
 
 #body-login{
@@ -379,7 +466,7 @@ body{
 
  
 
-#form-login a:hover{
+#form-login a:hover, #link-login:hover{
 
     text-decoration: underline;
 
