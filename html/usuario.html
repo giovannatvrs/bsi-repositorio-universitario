@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
 <body>
+    
     <header>
         <div class="logo">
             <img src="../fotos/cropped-bsi-logomarcaV01.png" alt="Logotipo do curso de BSI da UNIRIO">
@@ -23,8 +24,65 @@
                 </a>
             </h1>
         </div>
-        <a id="link-login">Login</a>
+        <a id="link-login" href="login.html">Login</a>
     </header>
+    <div id="overlay">
+        <div id="modal">
+           
+            <form id="form-upload" enctype="multipart/form-data">
+                <div class="parte-superior">
+                    <h3>Novo upload</h3>
+                    <span class="material-symbols-outlined" id=close>close</span>
+                </div>
+                <label for="nome-arquivo">Nome do arquivo: </label><br>
+                <input type="text" id="nome-arquivo" name="nome-arquivo"><br>
+                <label for="disciplina">Disciplina:</label>
+                <select id="disciplina" name="disciplina">
+                    <option value="" disabled selected>Selecione uma disciplina</option>
+                    <option value="Álgebra Linear">Álgebra Linear</option>
+                    <option value="Algoritmos e Programação">Algoritmos e Programação</option>
+                    <option value="Análise e Projeto de Sistemas">Análise e Projeto de Sistemas</option>
+                    <option value="Armazenamento e Gestão de Dados">Armazenamento e Gestão de Dados</option>
+                    <option value="Arquitetura de Computadores">Arquitetura de Computadores</option>
+                    <option value="Cálculo I">Cálculo I</option>
+                    <option value="Cálculo II">Cálculo II</option>
+                    <option value="Ciência de Dados">Ciência de Dados</option>
+                    <option value="Empreendedorismo e Inovação">Empreendedorismo e Inovação</option>
+                    <option value="Engenharia de Dados I">Engenharia de Dados I</option>
+                    <option value="Engenharia de Dados II">Engenharia de Dados II</option>
+                    <option value="Estatística">Estatística</option>
+                    <option value="Estrutura de Dados">Estrutura de Dados</option>
+                    <option value="Fundamentos de Cálculo">Fundamentos de Cálculo</option>
+                    <option value="Fundamentos de Gestão Organizacional">Fundamentos de Gestão Organizacional</option>
+                    <option value="Fundamentos de Sistemas de Informação">Fundamentos de Sistemas de Informação</option>
+                    <option value="Gerência de Projetos">Gerência de Projetos</option>
+                    <option value="Gestão de Processos de Negócio">Gestão de Processos de Negócio</option>
+                    <option value="Gestão de Tecnologia da Informação">Gestão de Tecnologia da Informação</option>
+                    <option value="Informação e Sociedade">Informação e Sociedade</option>
+                    <option value="Interação Humano-Computador">Interação Humano-Computador</option>
+                    <option value="Introdução à Lógica Computacional">Introdução à Lógica Computacional</option>
+                    <option value="Linguagens e Paradigmas de Programação">Linguagens e Paradigmas de Programação</option>
+                    <option value="Metodologia Científica e Tecnológica">Metodologia Científica e Tecnológica</option>
+                    <option value="Modelagem da Informação">Modelagem da Informação</option>
+                    <option value="Probabilidade">Probabilidade</option>
+                    <option value="Projeto e Análise de Algoritmos">Projeto e Análise de Algoritmos</option>
+                    <option value="Projeto Integrador I">Projeto Integrador I</option>
+                    <option value="Projeto Integrador II">Projeto Integrador II</option>
+                    <option value="Redes de Computadores">Redes de Computadores</option>
+                    <option value="Sistemas Operacionais">Sistemas Operacionais</option>
+                    <option value="Técnicas de Programação">Técnicas de Programação</option>
+                </select>
+                <label for="arquivo">Envie seu arquivo:</label>
+                <input type="file" id="arquivo" name="arquivo">
+                <br>
+                <div id="botoes">
+                    <button type="submit" id="confirmar">CONFIRMAR</button>
+                    <button type="button" id="cancelar">CANCELAR</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
     <div id="container">
         <aside>
             <div id="conteudo">
@@ -82,13 +140,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <td>Resumo Banco de Dados</td>
-                    <td>Banco de Dados</td>
-                    <td>08/05/2025</td>
+                    <tr>
+                        <td>Resumo Banco de Dados</td>
+                        <td>Banco de Dados</td>
+                        <td>08/05/2025</td>
+                    </tr>
+                    <tr>
+                        <td>Resumo Banco de Dados</td>
+                        <td>Banco de Dados</td>
+                        <td>08/05/2025</td>
+                    </tr>
+                    
                 </tbody>
             </table>
         </section>  
     </div>
-     
+     <script src="../js/script.js"></script>
 </body>
 </html>

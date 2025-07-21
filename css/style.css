@@ -123,7 +123,7 @@ aside{
     flex-direction: column;
     gap: 20px;
     box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
-    height: 100vh;
+    height: 100dvh;
 }
 
 
@@ -143,9 +143,7 @@ aside{
     border-radius: 5px;
     margin-top:10%;
     margin-bottom: 10%;
-    cursor: pointer;
     transition: all 0.5s;
-    
     display: flex;
     justify-content: center;
     align-items: center;    
@@ -155,9 +153,107 @@ aside{
  
 
 #novo:hover{
-
+    cursor: pointer;
     background-color: rgba(32, 65, 173, 1);
 
+}
+
+
+#overlay{
+    display: none;
+    width: 100%;
+    height: 100dvh;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    
+}
+
+#modal{
+    margin-top: -180px;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#form-upload{
+   
+    background-color: white;
+    border-radius: 10px;
+    width: 450px;
+    height: 310px;
+    padding: 25px;
+    box-shadow: 0 0 5px 2px rgba(99, 99, 99, 0.5);
+    margin: 0 auto;
+    font-size: 1rem;
+}
+
+.parte-superior{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+input#nome-arquivo, select{
+    border-radius: 4px;
+    background-color: rgba(233, 233, 233, 1);
+    width: 100%;
+    height: 1.6rem;
+    border: solid 1px rgb(216, 216, 216)
+}
+
+form{
+    padding: 20px;
+}
+
+form label, input, select, form p{
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+#botoes{
+    margin-top: 5px;
+}
+
+#confirmar{
+    background-color: rgba(32, 65, 173, 1);
+    color: white;
+    font-weight: 500;
+    width: 100px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: inline-end;
+}
+
+#confirmar:hover{
+    opacity: 0.9;
+}
+
+#cancelar{
+    background-color: white;
+    color: #777777;
+    font-weight: 500;
+    width: 100px;
+    height: 30px;
+    margin-right: 10px;
+    cursor: pointer;
+    float: inline-end;
+}
+
+#cancelar:hover{
+    text-decoration: underline;
+}
+
+#close:hover{
+    cursor: pointer;
+}
+
+#overlay.ativo{
+    display: block;
 }
 
 #btn-disciplinas{
@@ -174,11 +270,16 @@ aside{
 
 #lista-disciplinas{
     font-family: "Segoe UI", "Segoe", "SegoeUI-Regular-final", Tahoma, Helvetica, Arial, sans-serif;
-    max-height: 250px;
+    max-height: 0;
     overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: #90caf9 #ffff;
     transition: max-height 0.4s ease;
+}
+
+#lista-disciplinas.ativa{
+    max-height: 250px;
+    
 }
 
 #lista-disciplinas ul li{
@@ -237,6 +338,10 @@ table th:hover{
     cursor: pointer;
 }
 
+table td{
+    border-bottom: 1px solid rgb(236, 236, 236);
+}
+
 #body-login{
 
     display: flex;
@@ -245,7 +350,7 @@ table th:hover{
 
     align-items: center;
 
-    height: 100vh;
+    height: 100dvh;
 
 }
 
@@ -418,11 +523,12 @@ table th:hover{
 
 #form-login h2{
 
-    font-weight: 300;
+    font-weight: 400;
 
     font-size: 35px;
 
     margin-bottom: 50px;
+    color: #333;
     
 }
 
