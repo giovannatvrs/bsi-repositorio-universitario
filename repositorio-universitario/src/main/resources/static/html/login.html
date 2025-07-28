@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login - Repositório Universitário - BSI UNIRIO</title>
     
-    <link rel="stylesheet" href="../css/style.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
@@ -33,44 +33,16 @@
             </div>
             <div id="form-login">
                 <h2>Login</h2>
-                <div id="buttonDiv"></div>
+                <a href="http://localhost:8080/oauth2/authorization/google">login</a>
                 <p>Realize o login utilizando seu e-mail institucional da UNIRIO.</p>
                 <p id="espaco">Qualquer outro e-mail usado não será aceito.</p>
                 <fieldset><legend>ou</legend></fieldset>
                 <div id="link">
-                    <a href="visitante.html">Continue como visitante</a>
+                    <a href="html/visitante.html">Continue como visitante</a>
                 </div>
             </div>
         </div>
     </div>
-    <script src="https://accounts.google.com/gsi/client" async></script>
-  <script>
-    function handleCredentialResponse(response) {
-      const token = response.credential;
-      const decodedToken = parseJwt(token);
-      console.log(decodedToken);
-    }
 
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      return JSON.parse(jsonPayload);
-    }
-
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "798904101516-j8bksfbplacea3cu31dj3q8e4f9smjsp.apps.googleusercontent.com",
-        callback: handleCredentialResponse
-      });
-      google.accounts.id.renderButton(
-        document.getElementById("buttonDiv"),
-        { theme: "outline", size: "large" }
-      );
-      google.accounts.id.prompt();
-    }
-  </script>
 </body>
 </html>
