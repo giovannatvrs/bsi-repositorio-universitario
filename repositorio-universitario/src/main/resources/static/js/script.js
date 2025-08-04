@@ -26,7 +26,7 @@ if(popUp){
 }
 
 async function fetchData(){
-    urlData = window.location.pathname;
+
     try{
         const response = await fetch("/usuario-info",{
             credentials: 'include'
@@ -42,6 +42,7 @@ async function fetchData(){
         console.log(data);
 
         atualizarPerfil(data);
+        atualizarNavegacao(data)
 
     }catch(error){
         console.error("Falha em carregar os dados do usuário",error);
@@ -64,20 +65,25 @@ function atualizarPerfil(data){
 
 document.addEventListener("DOMContentLoaded", fetchData);
 
-document.addEventListener("DOMContentLoaded", atualizarNavegacao);
 
-function atualizarNavegacao(){
+
+function atualizarNavegacao(data){
     var urlData= window.location.pathname;
     const paginas = document.getElementById("paginas");
-    if(urlData == "/usuario-logado"){
+    if(urlData == "/usuario-logado" && data.funcao=="ADMINISTRADOR"){
         paginas.innerHTML = `<a>Histórico</a>
         <a href="/usuarios">Usuários</a>
-        <a>Moderadores</a>`
+        <a href="/moderadores">Moderadores</a>`
     }
     if(urlData == "/usuarios"){
         paginas.innerHTML = `<a onclick="history.back()">Voltar</a>
         <a>Histórico</a>
-        <a>Moderadores</a>`
+        <a href="/moderadores">Moderadores</a>`
+    }
+    if(urlData == "/moderadores"){
+        paginas.innerHTML = `<a onclick="history.back()">Voltar</a>
+        <a>Histórico</a>
+        <a href="/usuarios">Usuários</a>`
     }
 
 }

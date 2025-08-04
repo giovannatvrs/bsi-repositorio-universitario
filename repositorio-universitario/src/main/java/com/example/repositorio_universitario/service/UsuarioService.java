@@ -45,7 +45,7 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
     public List<Usuario> listarModeradores() {
-        return  usuarioRepository.findByFuncao("MODERADOR");
+        return  usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.repositorio_universitario.controller;
 
+import ch.qos.logback.core.model.Model;
+import com.example.repositorio_universitario.Enums.FuncaoUsuario;
 import com.example.repositorio_universitario.authentification.CustomOAuth2User;
 import com.example.repositorio_universitario.domain.Usuario;
 import com.example.repositorio_universitario.repository.UsuarioRepository;
@@ -13,6 +15,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -42,6 +46,30 @@ public class UsuarioController {
         List<Usuario> usuarios = usuarioRepository.findAll();
         modelAndView.addObject("usuarios", usuarios);
         return modelAndView;
+    }
+
+    @GetMapping("/moderadores")
+    public ModelAndView moderadores() {
+        ModelAndView modelAndView = new ModelAndView("moderadores");
+        List<Usuario> moderadores = usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR);
+        modelAndView.addObject("moderadores", moderadores);
+        return modelAndView;
+    }
+
+    @PostMapping("/promover/{id}")
+    public String promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
+        Usuario usuario = usuarioRepository.findById(id).get();
+        usuario.setFuncao(FuncaoUsuario.MODERADOR);
+        usuarioRepository.save(usuario);
+        return "redirect:/usuarios";
+    }
+
+    @PostMapping("/retirar-papel/{id}")
+    public String retirarPapel(@PathVariable("id") Integer id) {
+        Usuario usuario = usuarioRepository.findById(id).get();
+        usuario.setFuncao(FuncaoUsuario.USUARIO);
+        usuarioRepository.save(usuario);
+        return "redirect:/moderadores";
     }
 
 

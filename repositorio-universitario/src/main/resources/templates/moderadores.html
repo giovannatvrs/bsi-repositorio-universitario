@@ -38,38 +38,31 @@
 
     </aside>
     <section id="main">
-        <h2>Usuários</h2>
+        <h2>Moderadores</h2>
         <table id="tabela">
             <thead>
             <tr>
                 <th>Nome</th>
                 <th>E-mail</th>
-                <th>Papel</th>
                 <th>Ação</th>
             </tr>
             </thead>
-            <tbody class="lista-usuarios">
-                <tr th:each="usuario: ${usuarios}">
-                    <td>
-                        <div class="informacoes-perfil">
-                            <img th:src="${usuario.url_foto}" referrerpolicy="no-referrer">
-                            <span th:text="${usuario.nome}"></span>
-                        </div>
-                    </td>
-                    <td th:text="${usuario.email}"></td>
-                    <td th:switch="${usuario.funcao.name()}">
-                        <span th:case="'USUARIO'">Usuário(a)</span>
-                        <span th:case="'ADMINISTRADOR'">Administrador(a)</span>
-                        <span th:case="'MODERADOR'">Moderador(a)</span>
-                    </td>
-                    <td class="ação">
-                        <form th:if="${usuario.funcao.name() == 'USUARIO'}" th:action="@{/promover/{id}(id=${usuario.id})}" method="post">
-                            <button type="submit" class="botao-tornar-usuario-moderador">Tornar moderador</button>
-                        </form>
-                        
-                    </td>
+            <tbody class="lista-moderadores">
+            <tr th:each="usuario: ${moderadores}">
+                <td>
+                    <div class="informacoes-perfil">
+                        <img th:src="${usuario.url_foto}" referrerpolicy="no-referrer">
+                        <span th:text="${usuario.nome}"></span>
+                    </div>
+                </td>
+                <td th:text="${usuario.email}"></td>
+                <td class="ação">
+                    <form th:action="@{/retirar-papel/{id}(id=${usuario.id})}" method="post">
+                        <button type="submit" class="botao-retirar-papel-moderador">Retirar papel de moderador</button>
+                    </form>
+                </td>
 
-                </tr>
+            </tr>
             </tbody>
         </table>
     </section>
