@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Repositório Universitário - BSI UNIRIO</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="../fotos/cropped-bsi-logomarcaV01.png" alt="Logotipo do curso de BSI da UNIRIO" id="imagem-logo">
+        <h1>
+            <a href="usuario.html">
+                <span class="linha1">REPOSITÓRIO</span>
+                <span class="linha2">UNIVERSITÁRIO</span>
+            </a>
+        </h1>
+    </div>
+    <div class="informacoes-perfil">
+        <img id="foto-perfil" alt="Foto de perfil">
+        <span  id="nome-usuario"></span>
+    </div>
+
+</header>
+<div id="container">
+    <aside>
+        <div id="paginas">
+
+        </div>
+
+    </aside>
+    <section id="main">
+        <h2>Usuários</h2>
+        <table id="tabela">
+            <thead>
+            <tr>
+                <th>Nome do usuário</th>
+                <th>E-mail</th>
+                <th>Papel</th>
+            </tr>
+            </thead>
+            <tbody class="lista-usuarios">
+                <tr th:each="usuario: ${usuarios}">
+                    <td>
+                        <div class="informacoes-perfil">
+                            <img th:src="${usuario.url_foto}">
+                            <span th:text="${usuario.nome}"></span>
+                        </div>
+                    </td>
+                    <td th:text="${usuario.email}"></td>
+                    <td th:text="${usuario.funcao}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

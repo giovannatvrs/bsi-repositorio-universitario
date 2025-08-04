@@ -1,29 +1,48 @@
 package com.example.repositorio_universitario.controller;
 
+import com.example.repositorio_universitario.authentification.CustomOAuth2User;
+import com.example.repositorio_universitario.domain.Usuario;
+import com.example.repositorio_universitario.repository.UsuarioRepository;
+import com.example.repositorio_universitario.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-@RestController
+@Controller
 public class UsuarioController {
 
-    @GetMapping("/api/user")
-    public ResponseEntity<Map<String, Object>> getUserInfo(OAuth2AuthenticationToken auth) {
-        if(auth == null){
-            return ResponseEntity.ok(null);
-        }
-        String name = auth.getPrincipal().getAttribute("name");
-        String email = auth.getPrincipal().getAttribute("email");
-        String picture = auth.getPrincipal().getAttribute("picture");
-        if(picture == null){
-            picture = "default.png";
-        }
-        Map<String, Object> map = Map.of("name", name, "email", email, "picture", picture);
-        return ResponseEntity.ok(map);
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+
+    @GetMapping("/usuario-logado")
+    public ModelAndView usuarioLogado(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        ModelAndView modelAndView = new ModelAndView("usuario");
+
+        return modelAndView;
+
     }
+
+    @GetMapping("/usuarios")
+    public ModelAndView usuarios() {
+        ModelAndView modelAndView = new ModelAndView("usuarios");
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        modelAndView.addObject("usuarios", usuarios);
+        return modelAndView;
+    }
+
+
 }

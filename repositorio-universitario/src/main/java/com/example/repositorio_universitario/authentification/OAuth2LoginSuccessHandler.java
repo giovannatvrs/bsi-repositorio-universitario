@@ -16,7 +16,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-    String redirectUri = "/html/usuario.html";
+    String redirectUri = "/usuario-logado";
     response.sendRedirect(redirectUri);
 
     }

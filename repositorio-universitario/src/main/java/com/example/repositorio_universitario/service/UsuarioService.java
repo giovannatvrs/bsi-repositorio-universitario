@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -38,6 +39,13 @@ public class UsuarioService {
 
         return usuario;
 
+    }
+
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+    public List<Usuario> listarModeradores() {
+        return  usuarioRepository.findByFuncao("MODERADOR");
     }
 
 }

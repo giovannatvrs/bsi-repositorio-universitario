@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -27,19 +29,21 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(req -> {
                     CorsConfiguration cfg = new CorsConfiguration();
-                    cfg.addAllowedOrigin("");
+                    cfg.setAllowedOrigins(List.of("http://localhost:4200"));
                     cfg.setAllowCredentials(true);
+                    cfg.addAllowedMethod("*");
+                    cfg.addAllowedHeader("*");
                     return cfg;
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/", "/login.html", "/css/**", "/fotos/**", "/html/visitante.html").permitAll()
+                        .requestMatchers("/", "/login", "/css/**", "/fotos/**", "/visitante").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler))
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/html/login.html")
+                        .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")

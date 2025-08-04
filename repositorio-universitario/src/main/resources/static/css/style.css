@@ -102,18 +102,34 @@ header{
 
 }
 
- 
+.informacoes-perfil{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+} 
 
-img{
+.informacoes-perfil img{
+    height: 30px;
+    border-radius: 30px;
+}
+
+#imagem-logo{
 
     height: 60px;
 
+}
+
+#foto-perfil{
+    height: 30px;
+    border-radius: 30px;
 }
 
 #container{
     display: flex;
     flex-direction: row;
 }
+
 
 aside{
     width: 250px;
@@ -124,6 +140,7 @@ aside{
     gap: 20px;
     box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
     height: 100dvh;
+    gap: 20px;
 }
 
 
@@ -139,7 +156,7 @@ aside{
     font-size: 18px;
     font-weight: 400;
     height: 60px;
-    width: 80%;
+    width: 100%;
     border-radius: 5px;
     margin-top:10%;
     margin-bottom: 10%;
@@ -256,15 +273,18 @@ form label, input, select, form p{
     display: block;
 }
 
-#btn-disciplinas{
+#btn-disciplinas, aside a{
     font-weight: 500;
     color:#0d47a1;
-    margin-bottom: 5px;
+}
+
+#paginas{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 #btn-disciplinas:hover{
-    background-color: rgb(255, 255, 255);
-    text-decoration: underline;
     cursor: pointer;
 }
 
@@ -279,6 +299,7 @@ form label, input, select, form p{
 
 #lista-disciplinas.ativa{
     max-height: 250px;
+    margin-bottom: 20px;
     
 }
 
