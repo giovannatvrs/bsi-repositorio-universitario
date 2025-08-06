@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/bsi-repositorio-universitario.iml" filepath="$PROJECT_DIR$/.idea/bsi-repositorio-universitario.iml" />
-      <module fileurl="file://$PROJECT_DIR$/repositorio-universitario/repositorio-universitario.iml" filepath="$PROJECT_DIR$/repositorio-universitario/repositorio-universitario.iml" />
     </modules>
   </component>
 </project>

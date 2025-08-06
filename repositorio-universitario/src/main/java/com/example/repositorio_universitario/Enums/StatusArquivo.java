@@ -4,14 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum StatusArquivo {
-    PENDENTE("Pendente"),
-    APROVADO("Aprovado"),
-    REPROVADO("Reprovado");
+    PENDENTE,
+    APROVADO,
+    REPROVADO;
 
-    private String statusArquivo;
-    private StatusArquivo(String statusArquivo) {
-        this.statusArquivo = statusArquivo;
-    }
 
 
 }
