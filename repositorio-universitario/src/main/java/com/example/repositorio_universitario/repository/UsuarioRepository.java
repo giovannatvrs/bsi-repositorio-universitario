@@ -13,6 +13,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByEmail(String email);
     List<Usuario> findByFuncao(FuncaoUsuario funcao);
 
-    @Override
-    Optional<Usuario> findById(Integer integer);
+
 }

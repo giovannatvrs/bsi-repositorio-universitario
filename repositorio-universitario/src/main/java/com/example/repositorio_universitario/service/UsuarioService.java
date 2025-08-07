@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -33,14 +34,15 @@ public class UsuarioService {
                 novo.setFuncao(FuncaoUsuario.USUARIO);
             }
             novo.setSuspenso(false);
-            System.out.println("Função do usuário: " + novo.getFuncao());
             return usuarioRepository.save(novo);
         });
 
         return usuario;
 
     }
-
+    public Usuario buscarPorEmail(String email){
+        return usuarioRepository.findByEmail(email).get();
+    }
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }

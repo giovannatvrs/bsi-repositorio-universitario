@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,15 +33,15 @@
 <div id="overlay">
     <div id="modal">
 
-        <form id="form-upload" enctype="multipart/form-data">
+        <form id="form-upload" method="post" th:action="@{/upload}" enctype="multipart/form-data">
             <div class="parte-superior">
                 <h3>Novo upload</h3>
                 <span class="material-symbols-outlined" id=close>close</span>
             </div>
             <label for="nome-arquivo">Nome do arquivo: </label><br>
-            <input type="text" id="nome-arquivo" name="nome-arquivo"><br>
+            <input type="text" id="nome-arquivo" name="nome-arquivo" required><br>
             <label for="disciplina">Disciplina:</label>
-            <select id="disciplina" name="disciplina">
+            <select id="disciplina" name="disciplina" required>
                 <option value="" disabled selected>Selecione uma disciplina</option>
                 <option value="Álgebra Linear">Álgebra Linear</option>
                 <option value="Algoritmos e Programação">Algoritmos e Programação</option>

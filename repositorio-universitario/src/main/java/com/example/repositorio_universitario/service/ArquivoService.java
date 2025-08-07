@@ -14,14 +14,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -48,7 +55,7 @@ public class ArquivoService {
         arquivo.setData(LocalDateTime.now());
         arquivo.setUrl(url);
         arquivo.setDescricao(descricao);
-        arquivo.setStatus(StatusArquivo.PENDENTE)
+        arquivo.setStatus(StatusArquivo.PENDENTE);
         arquivo.setUsuario(usuario);
 
         arquivoRepository.save(arquivo);

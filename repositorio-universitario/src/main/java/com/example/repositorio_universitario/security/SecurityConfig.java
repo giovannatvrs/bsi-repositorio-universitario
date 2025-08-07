@@ -38,7 +38,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/", "/login", "/css/**", "/fotos/**", "/visitante").permitAll()
+                        .requestMatchers("/", "/login", "/css/**", "/fotos/**", "/visitante", "/h2-console/").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
