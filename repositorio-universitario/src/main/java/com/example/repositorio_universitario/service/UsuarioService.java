@@ -40,6 +40,11 @@ public class UsuarioService {
         return usuario;
 
     }
+
+    public Usuario buscarPorId(int id){
+        return usuarioRepository.findById(id).get();
+    }
+
     public Usuario buscarPorEmail(String email){
         return usuarioRepository.findByEmail(email).get();
     }

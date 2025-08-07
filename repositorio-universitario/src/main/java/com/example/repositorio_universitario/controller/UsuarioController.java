@@ -31,6 +31,9 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
 
     @GetMapping("/usuario-logado")
     public ModelAndView usuarioLogado(@AuthenticationPrincipal OAuth2User oAuth2User) {
@@ -43,7 +46,7 @@ public class UsuarioController {
     @GetMapping("/usuarios")
     public ModelAndView usuarios() {
         ModelAndView modelAndView = new ModelAndView("usuarios");
-        List<Usuario> usuarios = usuarioRepository.findAll();
+        List<Usuario> usuarios = usuarioService.listarUsuarios();
         modelAndView.addObject("usuarios", usuarios);
         return modelAndView;
     }
@@ -51,14 +54,14 @@ public class UsuarioController {
     @GetMapping("/moderadores")
     public ModelAndView moderadores() {
         ModelAndView modelAndView = new ModelAndView("moderadores");
-        List<Usuario> moderadores = usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR);
+        List<Usuario> moderadores = usuarioService.listarModeradores();
         modelAndView.addObject("moderadores", moderadores);
         return modelAndView;
     }
 
     @PostMapping("/promover/{id}")
     public String promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.MODERADOR);
         usuarioRepository.save(usuario);
         return "redirect:/usuarios";
@@ -66,7 +69,7 @@ public class UsuarioController {
 
     @PostMapping("/retirar-papel/{id}")
     public String retirarPapel(@PathVariable("id") Integer id) {
-        Usuario usuario = usuarioRepository.findById(id).get();
+        Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.USUARIO);
         usuarioRepository.save(usuario);
         return "redirect:/moderadores";
