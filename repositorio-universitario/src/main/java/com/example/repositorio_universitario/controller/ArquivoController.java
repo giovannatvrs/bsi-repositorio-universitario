@@ -29,7 +29,7 @@ public class ArquivoController {
     public String fazerUploadArquivo(@RequestParam("file") MultipartFile file, @RequestParam("disciplina") String disciplina, @RequestParam("descricao") String descricao, @AuthenticationPrincipal CustomOAuth2User user) throws IOException {
         Usuario usuario = usuarioService.buscarPorEmail(user.getEmail());
         arquivoService.uploadFile(file, disciplina, descricao, usuario);
-        return "redirect:/usuario";
+        return "usuario";
     }
 
 }
