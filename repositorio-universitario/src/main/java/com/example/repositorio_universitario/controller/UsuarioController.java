@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Controller
+@RestController
 public class UsuarioController {
 
     @Autowired
@@ -36,43 +37,52 @@ public class UsuarioController {
 
 
     @GetMapping("/usuario-logado")
-    public ModelAndView usuarioLogado(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        ModelAndView modelAndView = new ModelAndView("usuario");
+    public ResponseEntity<?> usuarioLogado(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        String name = oAuth2User.getAttribute("name");
+        String email = oAuth2User.getAttribute("email");
+        String picture = oAuth2User.getAttribute("picture");
 
-        return modelAndView;
+        return usuarioRepository.findByEmail(email).map(usuario -> {
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("id", usuario.getId());
+            resposta.put("name", name);
+            resposta.put("email", email);
+            resposta.put("picture", picture);
+            resposta.put("suspenso", usuario.isSuspenso());
+            resposta.put("funcao", usuario.getFuncao());
+            return ResponseEntity.ok(resposta);
+        }).orElseGet(() -> {
+            Map<String, Object> erro = new HashMap<>();
+            erro.put("erro", "Usuário não encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+        });
 
     }
 
     @GetMapping("/usuarios")
-    public ModelAndView usuarios() {
-        ModelAndView modelAndView = new ModelAndView("usuarios");
+    public ResponseEntity<List<Usuario>> usuarios() {
         List<Usuario> usuarios = usuarioService.listarUsuarios();
-        modelAndView.addObject("usuarios", usuarios);
-        return modelAndView;
+        return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/moderadores")
-    public ModelAndView moderadores() {
-        ModelAndView modelAndView = new ModelAndView("moderadores");
+    public ResponseEntity<List<Usuario>> moderadores() {
         List<Usuario> moderadores = usuarioService.listarModeradores();
-        modelAndView.addObject("moderadores", moderadores);
-        return modelAndView;
+       return ResponseEntity.ok(moderadores);
     }
 
     @PostMapping("/promover/{id}")
-    public String promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
+    public void promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.MODERADOR);
         usuarioRepository.save(usuario);
-        return "redirect:/usuarios";
     }
 
     @PostMapping("/retirar-papel/{id}")
-    public String retirarPapel(@PathVariable("id") Integer id) {
+    public void retirarPapel(@PathVariable("id") Integer id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.USUARIO);
         usuarioRepository.save(usuario);
-        return "redirect:/moderadores";
     }
 
 

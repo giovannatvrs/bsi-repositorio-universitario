@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -42,7 +43,10 @@ public class ArquivoService {
     @Autowired
     private ArquivoRepository arquivoRepository;
 
-    public void uploadFile(MultipartFile file, String disciplina, String descricao, Usuario usuario) throws IOException{
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public void uploadFile(MultipartFile file, String nome, String disciplina, String descricao, Usuario usuario) throws IOException{
         String fileName = UUID.randomUUID() + "-"+ file.getOriginalFilename();
 
         s3Client.putObject(PutObjectRequest.builder()
@@ -50,7 +54,8 @@ public class ArquivoService {
                 .key(fileName).build(), RequestBody.fromBytes(file.getBytes()));
         String url = "https://"+bucket+".s3.amazonaws.com/"+fileName;
         Arquivo arquivo = new Arquivo();
-        arquivo.setNome(file.getOriginalFilename());
+        arquivo.setNome(nome);
+        arquivo.setNome_real_arquivo(fileName);
         arquivo.setDisciplina(disciplina);
         arquivo.setData(LocalDateTime.now());
         arquivo.setUrl(url);
@@ -58,29 +63,20 @@ public class ArquivoService {
         arquivo.setStatus(StatusArquivo.PENDENTE);
         arquivo.setUsuario(usuario);
 
+        String tipoMime = file.getContentType();
+        arquivo.setTipoMime(tipoMime != null ? tipoMime : "application/octet-stream");
+
         arquivoRepository.save(arquivo);
     }
 
-    public ResponseEntity<Resource> download(int id){
-        Arquivo arquivo = arquivoRepository.findById(id).orElseThrow();
-        String key = arquivo.getUrl().substring(arquivo.getUrl().lastIndexOf("/") + 1);
-
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+    public byte[] downloadFile(String key) {
+        ResponseBytes<GetObjectResponse> objectAsBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
-                .build();
-
-        ResponseInputStream<GetObjectResponse> inputStream = s3Client.getObject(getObjectRequest);
-
-        InputStreamResource resource = new InputStreamResource(inputStream);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + arquivo.getNome() + "\"")
-                .body(resource);
-
+                .build());
+        return objectAsBytes.asByteArray();
     }
+
 
     public void deletarArquivo(int id){
         Arquivo arquivo = arquivoRepository.findById(id).orElseThrow();
@@ -89,13 +85,20 @@ public class ArquivoService {
                 .bucket(bucket)
                 .key(key)
                 .build());
+        arquivoRepository.delete(arquivo);
+
+    }
+
+    public Arquivo getArquivo(int id){
+        return arquivoRepository.findById(id).orElseThrow();
     }
 
     public List<Arquivo> listarArquivos(){
         return arquivoRepository.findByStatus(StatusArquivo.APROVADO);
     }
 
-    public List<Arquivo> listarArquivosUsuario(Usuario usuario){
+    public List<Arquivo> listarArquivosUsuario(int id){
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow();
         return arquivoRepository.findByUsuario(usuario);
     }
 

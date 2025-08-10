@@ -22,6 +22,9 @@ public class Arquivo {
     @Column(name="id_arquivo")
     private int id;
 
+    @Column(name="nome_real_arquivo")
+    private String nome_real_arquivo;
+
     @Column(name="nome_arquivo")
     private String nome;
 
@@ -37,6 +40,10 @@ public class Arquivo {
     @Column(name="descricao_arquivo")
     private String descricao;
 
+    @Column(name="tipo_mime_arquivo")
+    private String tipoMime;
+
+    @Enumerated(EnumType.STRING)
     @Column(name="status_arquivo")
     private StatusArquivo status;
 

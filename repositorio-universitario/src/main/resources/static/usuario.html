@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Repositório Universitário - BSI UNIRIO</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="css/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
 <div id="overlay">
     <div id="modal">
 
-        <form id="form-upload" method="post" th:action="@{/upload}" enctype="multipart/form-data">
+        <form id="form-upload" enctype="multipart/form-data">
             <div class="parte-superior">
                 <h3>Novo upload</h3>
                 <span class="material-symbols-outlined" id=close>close</span>
@@ -76,11 +76,15 @@
                 <option value="Sistemas Operacionais">Sistemas Operacionais</option>
                 <option value="Técnicas de Programação">Técnicas de Programação</option>
             </select>
+            <label for="descricao-arquivo">Descrição:</label>
+            <br>
+            <textarea id="descricao-arquivo" name="descricao-arquivo"></textarea>
+            <br>
             <label for="arquivo">Envie seu arquivo:</label>
             <input type="file" id="arquivo" name="arquivo">
             <br>
             <div id="botoes">
-                <button type="submit" id="confirmar">CONFIRMAR</button>
+                <button type="button" id="confirmar">CONFIRMAR</button>
                 <button type="button" id="cancelar">CANCELAR</button>
             </div>
 
@@ -161,6 +165,6 @@
         </table>
     </section>
 </div>
-<script th:src="@{/js/script.js}"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
