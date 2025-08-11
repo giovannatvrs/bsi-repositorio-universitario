@@ -1,5 +1,6 @@
 package com.example.repositorio_universitario.controller;
 
+import com.example.repositorio_universitario.Enums.StatusArquivo;
 import com.example.repositorio_universitario.authentification.CustomOAuth2User;
 import com.example.repositorio_universitario.domain.Arquivo;
 import com.example.repositorio_universitario.domain.Usuario;
@@ -28,6 +29,8 @@ public class ArquivoController {
 
     @Autowired
     UsuarioService usuarioService;
+    @Autowired
+    private ArquivoRepository arquivoRepository;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadArquivo(@RequestParam("file") MultipartFile file, @RequestParam("nome") String nome, @RequestParam("disciplina") String disciplina, @RequestParam("descricao") String descricao, @AuthenticationPrincipal CustomOAuth2User user) throws IOException {
@@ -79,6 +82,20 @@ public class ArquivoController {
     public ResponseEntity<List<Arquivo>> listarArquivosPendentes() {
         List<Arquivo> arquivosPendentes = arquivoService.listarArquivosPendentes();
         return ResponseEntity.ok(arquivosPendentes);
+    }
+
+    @PostMapping("/aprovar/{id}")
+    public void aprovarArquivo(@PathVariable ("id") int id){
+        Arquivo arquivo = arquivoService.getArquivo(id);
+        arquivo.setStatus(StatusArquivo.APROVADO);
+        arquivoRepository.save(arquivo);
+    }
+
+    @PostMapping("/reprovar/{id}")
+    public void reprovarArquivo(@PathVariable ("id") int id){
+        Arquivo arquivo = arquivoService.getArquivo(id);
+        arquivo.setStatus(StatusArquivo.REPROVADO);
+        arquivoRepository.save(arquivo);
     }
 
 }

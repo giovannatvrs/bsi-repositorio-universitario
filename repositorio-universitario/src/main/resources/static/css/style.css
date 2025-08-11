@@ -102,19 +102,9 @@ header{
 
 }
 
-.icones{
-    display: flex;
 
-    align-items: center;
 
-    justify-content: center;
 
-    gap: 25px;
-}
-
-.icones span{
-    cursor: pointer;
-}
 
 .informacoes-perfil{
     display: flex;
@@ -383,9 +373,12 @@ table td{
     border-bottom: 1px solid rgb(236, 236, 236);
 }
 
+.material-symbols-outlined{
+    cursor: pointer;
+}
 
 
-.botao-tornar-usuario-moderador{
+.botao-tornar-usuario-moderador, .aprovar-arquivo{
     background-color: white;
     color: #0d47a1;
     border: 1px solid #0d47a1;
@@ -394,13 +387,13 @@ table td{
     transition: all 0.6s;
 }
 
-.botao-tornar-usuario-moderador:hover{
+.botao-tornar-usuario-moderador:hover, .aprovar-arquivo:hover{
     background-color: #0d47a1;
     color: white;
     cursor: pointer;
 }
 
-.botao-retirar-papel-moderador{
+.botao-retirar-papel-moderador, .reprovar-arquivo{
     background-color: white;
     color: #a10d0d;
     border: 1px solid #a10d0d;
@@ -409,13 +402,19 @@ table td{
     transition: all 0.6s;
 }
 
-.botao-retirar-papel-moderador:hover{
+.botao-retirar-papel-moderador:hover, .reprovar-arquivo:hover{
     background-color: #a10d0d;
     color: white;
     cursor: pointer;
 }
 
-
+.icones{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+}
 
 
 #body-login{

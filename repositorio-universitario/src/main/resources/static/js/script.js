@@ -72,9 +72,10 @@ document.addEventListener("DOMContentLoaded", fetchData);
 function atualizarNavegacao(data){
     var urlData= window.location.pathname;
     const paginas = document.getElementById("paginas");
-    if(urlData == "/usuario.html"){
+    if (urlData == "/usuario.html"){
         if(data.funcao=="ADMINISTRADOR"){
             paginas.innerHTML = `<a>Histórico</a>
+            <a href="envios.html">Envios</a>
             <a href="/usuarios.html">Usuários</a>
             <a href="/moderadores.html">Moderadores</a>`
         }
@@ -106,7 +107,7 @@ function atualizarNavegacao(data){
 
 }
 
-if(window.location.pathname == '/envios.html'){
+if (window.location.pathname == '/envios.html'){
     async function listarArquivosUsuario(){
         try{
             const response = await fetch("/envios", {
@@ -120,13 +121,16 @@ if(window.location.pathname == '/envios.html'){
 
             data.forEach(function (arquivo){
                 info += `<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td>
-                        <td>${arquivo.status}</td><td><div class="icones"><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">
-                          description</span><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></div></td>
+                        <td>${arquivo.status}</td><td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">
+                          description</span></td>
+                          <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td>
+                          <td><span class="material-symbols-outlined deletar-arquivo" data-id="${arquivo.id}">delete</span></td>
                         </tr>`;
             })
             document.getElementById("lista-arquivos-usuario").innerHTML = info;
             downloadArquivo();
             visualizarArquivo();
+            deletarArquivo();
         }catch (error){
             console.error("Falha em carregar arquivos do usuário", error);
         }
@@ -134,7 +138,7 @@ if(window.location.pathname == '/envios.html'){
     document.addEventListener("DOMContentLoaded", listarArquivosUsuario);
 }
 
-if(window.location.pathname == '/solicitacoes.html'){
+if (window.location.pathname == '/solicitacoes.html'){
     async function listarArquivosPendentes(){
         try{
             const response = await fetch("/solicitacoes",{
@@ -147,12 +151,15 @@ if(window.location.pathname == '/solicitacoes.html'){
             let info = '';
             data.forEach(function (arquivo){
                 info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                        <td><div class="icones"><span class="material-symbols-outlined">
-                          description</span><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></div>
-                        </td></tr>`
+                        <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
+                        <td><button class="aprovar-arquivo" data-id="${arquivo.id}">Aprovar</button></td>
+                        <td><button class="reprovar-arquivo" data-id="${arquivo.id}">Reprovar</button></td>
+                        </tr>`
             })
-            document.getElementById("lista-arquivos").innerHTML = info;
-            downloadArquivo();
+            document.getElementById("lista-arquivos-pendentes").innerHTML = info;
+            visualizarArquivo();
+            aprovarArquivo();
+            reprovarArquivo();
         }catch (error){
             console.error("Falha em carregar arquivos", error);
         }
@@ -161,13 +168,78 @@ if(window.location.pathname == '/solicitacoes.html'){
     document.addEventListener("DOMContentLoaded", listarArquivosPendentes);
 }
 
+function reprovarArquivo(){
+    document.querySelectorAll(".reprovar-arquivo").forEach(icon => {
+        icon.addEventListener('click', async()=>{
+            const fileId = icon.getAttribute('data-id');
+            try{
+                const response = await fetch(`/reprovar/${fileId}`, {
+                    method: 'POST',
+                    credentials: "include"
+                })
+                if(!response.ok){
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                alert("Arquivo reprovado");
+                window.location.reload();
+            }catch(error){
+                console.error("Falha em reprovar arquivo", error);
+            }
+        });
+    });
+}
+
+function aprovarArquivo(){
+    document.querySelectorAll(".aprovar-arquivo").forEach(icon =>{
+        icon.addEventListener('click', async() => {
+            const fileId = icon.getAttribute('data-id');
+            try{
+                const response = await fetch(`/aprovar/${fileId}`, {
+                    method: 'POST',
+                    credentials: "include"
+                });
+                if(!response.ok){
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                alert("Arquivo aprovado com sucesso!");
+                window.location.reload();
+            }catch(error){
+                console.error("Falha em aprovar arquivo", error);
+            }
+        });
+    });
+}
+
+function deletarArquivo(){
+    document.querySelectorAll(".deletar-arquivo").forEach(icon => {
+        icon.addEventListener('click', async() =>{
+            const fileId = icon.getAttribute('data-id');
+            try{
+                const response = await fetch(`/deletar/${fileId}`,{
+                    method:'DELETE',
+                    credentials: "include"
+                });
+                if(!response.ok){
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                alert("Arquivo deletado!");
+                window.location.reload();
+            }catch(error){
+                console.error("Falha em deletar arquivo", error);
+            }
+
+        })
+        
+    })
+}
+
 function downloadArquivo(){
     document.querySelectorAll(".botao-download").forEach(icon =>{
         icon.addEventListener('click', async() => {
             const fileId = icon.getAttribute('data-id');
             const fileName = icon.getAttribute('data-nome');
             try{
-                const response = await fetch(`download/${fileId}`, {
+                const response = await fetch(`/download/${fileId}`, {
                     method: 'GET',
                     credentials: "include"
                 });
@@ -262,6 +334,9 @@ async function listarModeradores(){
 }
 document.addEventListener("DOMContentLoaded", listarModeradores);
 
+
+
+
 function ativarPromocaoUsuarios(){
     document.querySelectorAll('.botao-tornar-usuario-moderador').forEach(button =>{
         button.addEventListener('click', async () =>{
@@ -330,9 +405,8 @@ function fazerUploadArquivo(){
             nomeArquivo.value = '';
             disciplina.value = '';
             descricao.value = '';
-            document.getElementById("overlay").style.display = 'none';
             alert("Arquivo enviado para avaliação");
-
+            window.location.reload();
 
         }catch (error){
             console.error("Erro em realizar upload de arquivo", error);
