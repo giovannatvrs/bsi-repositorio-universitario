@@ -78,6 +78,12 @@ public class ArquivoController {
         return ResponseEntity.ok(arquivosUsuario);
     }
 
+    @GetMapping("/arquivos")
+    public ResponseEntity<List<Arquivo>> listarArquivos(){
+        List<Arquivo> arquivos = arquivoService.listarArquivos();
+        return ResponseEntity.ok(arquivos);
+    }
+
     @GetMapping("/solicitacoes")
     public ResponseEntity<List<Arquivo>> listarArquivosPendentes() {
         List<Arquivo> arquivosPendentes = arquivoService.listarArquivosPendentes();

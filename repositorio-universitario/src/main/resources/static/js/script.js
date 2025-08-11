@@ -107,6 +107,33 @@ function atualizarNavegacao(data){
 
 }
 
+if(window.location.pathname == '/usuario.html'){
+    async function listarArquivos(){
+        try{
+            const response = await fetch("/arquivos", {
+                method: 'GET',
+                credentials: "include"
+            });
+            if(!response.ok){
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            const data =  await response.json();
+            let info = '';
+            data.forEach(function (arquivo){
+                info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
+                <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
+                <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td></tr>`
+            })
+            document.getElementById("lista-arquivos").innerHTML = info;
+            downloadArquivo();
+            visualizarArquivo();
+        }catch (error){
+            console.log("Falha em listar arquivos do repositório", error);
+        }
+    }
+    document.addEventListener("DOMContentLoaded", listarArquivos);
+}
+
 if (window.location.pathname == '/envios.html'){
     async function listarArquivosUsuario(){
         try{
@@ -271,46 +298,50 @@ function visualizarArquivo(){
     });
 }
 
+
 async function listarUsuarios(){
     try{
         const response = await fetch("/usuarios",{
-            credentials: 'include'
+            credentials: "include"
         });
         if(!response.ok){
             throw new Error(`Erro HTTP: ${response.status}`);
         }
         const data = await response.json();
         let info = '';
+        console.log(data);
         data.forEach(function(usuario){
             let papel = '';
             switch(usuario.funcao){
-                case "ADMINISTRADOR":
+                    case "ADMINISTRADOR":
                     papel = 'Administrador(a)';
                     break;
-                case "MODERADOR":
-                    papel = 'Moderador(a)';
-                    break;
-                case "USUARIO":
-                    papel = 'Usuário(a)';
-                    break;
-            }
+                    case "MODERADOR":
+                        papel = 'Moderador(a)';
+                        break;
+                    case "USUARIO":
+                        papel = 'Usuário(a)';
+                        break;
+                }
 
-            info +=`<tr><td><div class="informacoes-perfil"><img src=${usuario.url_foto}>${usuario.nome}</div></td>
+                info +=`<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
             <td>${usuario.email}</td><td>${papel}</td>
             
             <td class="alterar-usuario"> ${papel === "Usuário(a)" ? `<button class="botao-tornar-usuario-moderador" data-id="${usuario.id}">Tornar usuário moderador</button>` : ``}</td></tr>`
 
-        })
-        document.getElementById("lista-usuarios").innerHTML=info;
-        ativarPromocaoUsuarios();
-    }
-    catch (error){
-        console.error("Falha em carregar os dados dos usuários",error);
-    }
+            })
+            document.getElementById("lista-usuarios").innerHTML=info;
+            ativarPromocaoUsuarios();
+        }
+        catch (error){
+            console.error("Falha em carregar os dados dos usuários",error);
+        }
 
 
-}
-document.addEventListener("DOMContentLoaded", listarUsuarios);
+    }
+    document.addEventListener("DOMContentLoaded", listarUsuarios);
+
+
 
 async function listarModeradores(){
     try{
@@ -324,15 +355,17 @@ async function listarModeradores(){
         let info = '';
         data.forEach(function (usuario){
             info = `<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
-                    <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel moderador</button></td></tr>`
+                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel moderador</button></td></tr>`
         })
-        document.getElementById("lista-moderadores").innerHTML = info;
-        ativarDesligamentoModerador();
+            document.getElementById("lista-moderadores").innerHTML = info;
+            ativarDesligamentoModerador();
     }catch (error){
         console.error("Falha em carregar os dados dos moderadores", error);
     }
 }
 document.addEventListener("DOMContentLoaded", listarModeradores);
+
+
 
 
 
@@ -378,6 +411,8 @@ function ativarDesligamentoModerador(){
         })
     });
 }
+
+
 
 function fazerUploadArquivo(){
     const upload = document.getElementById("confirmar");
