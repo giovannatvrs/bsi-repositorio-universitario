@@ -216,6 +216,7 @@ aside{
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    color: #0d47a1;
 }
 
 input#nome-arquivo, #descricao-arquivo, select{
@@ -234,14 +235,12 @@ textarea{
     resize: none;
 }
 
-form label, input, select, form p{
+form label, input, select, form p, textarea{
     margin-top: 5px;
     margin-bottom: 15px;
 }
 
-#botoes{
-    margin-top: 5px;
-}
+
 
 #confirmar{
     background-color: rgba(32, 65, 173, 1);
