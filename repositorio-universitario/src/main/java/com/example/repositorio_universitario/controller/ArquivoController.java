@@ -90,14 +90,14 @@ public class ArquivoController {
         return ResponseEntity.ok(arquivosPendentes);
     }
 
-    @PostMapping("/aprovar/{id}")
+    @PutMapping("/aprovar/{id}")
     public void aprovarArquivo(@PathVariable ("id") int id){
         Arquivo arquivo = arquivoService.getArquivo(id);
         arquivo.setStatus(StatusArquivo.APROVADO);
         arquivoRepository.save(arquivo);
     }
 
-    @PostMapping("/reprovar/{id}")
+    @PutMapping("/reprovar/{id}")
     public void reprovarArquivo(@PathVariable ("id") int id){
         Arquivo arquivo = arquivoService.getArquivo(id);
         arquivo.setStatus(StatusArquivo.REPROVADO);

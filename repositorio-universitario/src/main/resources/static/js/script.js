@@ -201,7 +201,7 @@ function reprovarArquivo(){
             const fileId = icon.getAttribute('data-id');
             try{
                 const response = await fetch(`/reprovar/${fileId}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     credentials: "include"
                 })
                 if(!response.ok){
@@ -222,7 +222,7 @@ function aprovarArquivo(){
             const fileId = icon.getAttribute('data-id');
             try{
                 const response = await fetch(`/aprovar/${fileId}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     credentials: "include"
                 });
                 if(!response.ok){
@@ -376,7 +376,7 @@ function ativarPromocaoUsuarios(){
             const userId = button.getAttribute('data-id');
             try{
                 const response = await fetch(`/promover/${userId}`, {
-                    method: "POST",
+                    method: "PUT",
                     credentials: "include"
                 });
                 if(!response.ok){
@@ -397,7 +397,7 @@ function ativarDesligamentoModerador(){
             const userId = button.getAttribute('data-id');
             try{
                 const response = await fetch(`/retirar-papel/${userId}`, {
-                   method: 'POST',
+                   method: 'PUT',
                    credentials: "include"
                 });
                 if(!response.ok){
