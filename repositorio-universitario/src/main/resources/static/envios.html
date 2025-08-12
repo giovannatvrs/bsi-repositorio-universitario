@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Repositório Universitário - BSI UNIRIO</title>
+    <title>Meus Arquivos - Repositório Universitário - BSI UNIRIO</title>
     <link rel="stylesheet" href="/css/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -38,42 +38,24 @@
 
     </aside>
     <section id="main">
-        <h2>Usuários</h2>
+        <h2>Meus Arquivos</h2>
         <table id="tabela">
             <thead>
             <tr>
                 <th>Nome</th>
-                <th>E-mail</th>
-                <th>Papel</th>
-                <th>Ação</th>
+                <th>Disciplina</th>
+                <th>Status</th>
+                <th></th>
+                <th></th>
+                <th></th>
             </tr>
             </thead>
-            <tbody class="lista-usuarios">
-                <tr th:each="usuario: ${usuarios}">
-                    <td>
-                        <div class="informacoes-perfil">
-                            <img th:src="${usuario.url_foto}" referrerpolicy="no-referrer">
-                            <span th:text="${usuario.nome}"></span>
-                        </div>
-                    </td>
-                    <td th:text="${usuario.email}"></td>
-                    <td th:switch="${usuario.funcao.name()}">
-                        <span th:case="'USUARIO'">Usuário(a)</span>
-                        <span th:case="'ADMINISTRADOR'">Administrador(a)</span>
-                        <span th:case="'MODERADOR'">Moderador(a)</span>
-                    </td>
-                    <td class="ação">
-                        <form th:if="${usuario.funcao.name() == 'USUARIO'}" th:action="@{/promover/{id}(id=${usuario.id})}" method="post">
-                            <button type="submit" class="botao-tornar-usuario-moderador">Tornar moderador</button>
-                        </form>
-                        
-                    </td>
+            <tbody id="lista-arquivos-usuario">
 
-                </tr>
             </tbody>
         </table>
     </section>
 </div>
-<script th:src="@{/js/script.js}"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

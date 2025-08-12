@@ -19,12 +19,14 @@
         <img src="../fotos/cropped-bsi-logomarcaV01.png" alt="Logotipo do curso de BSI da UNIRIO" id="imagem-logo">
         <h1>
             <a href="usuario.html">
+                
                 <span class="linha1">REPOSITÓRIO</span>
                 <span class="linha2">UNIVERSITÁRIO</span>
             </a>
         </h1>
     </div>
     <div class="informacoes-perfil">
+
         <img id="foto-perfil" alt="Foto de perfil">
         <span  id="nome-usuario"></span>
     </div>
@@ -47,26 +49,12 @@
                 <th>Ação</th>
             </tr>
             </thead>
-            <tbody class="lista-moderadores">
-            <tr th:each="usuario: ${moderadores}">
-                <td>
-                    <div class="informacoes-perfil">
-                        <img th:src="${usuario.url_foto}" referrerpolicy="no-referrer">
-                        <span th:text="${usuario.nome}"></span>
-                    </div>
-                </td>
-                <td th:text="${usuario.email}"></td>
-                <td class="ação">
-                    <form th:action="@{/retirar-papel/{id}(id=${usuario.id})}" method="post">
-                        <button type="submit" class="botao-retirar-papel-moderador">Retirar papel de moderador</button>
-                    </form>
-                </td>
+            <tbody id="lista-moderadores">
 
-            </tr>
             </tbody>
         </table>
     </section>
 </div>
-<script th:src="@{/js/script.js}"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

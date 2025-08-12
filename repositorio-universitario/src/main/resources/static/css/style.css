@@ -102,6 +102,10 @@ header{
 
 }
 
+
+
+
+
 .informacoes-perfil{
     display: flex;
     align-items: center;
@@ -201,7 +205,7 @@ aside{
     background-color: white;
     border-radius: 10px;
     width: 450px;
-    height: 310px;
+    height: 410px;
     padding: 25px;
     box-shadow: 0 0 5px 2px rgba(99, 99, 99, 0.5);
     margin: 0 auto;
@@ -214,7 +218,7 @@ aside{
     margin-bottom: 10px;
 }
 
-input#nome-arquivo, select{
+input#nome-arquivo, #descricao-arquivo, select{
     border-radius: 4px;
     background-color: rgba(233, 233, 233, 1);
     width: 100%;
@@ -222,7 +226,13 @@ input#nome-arquivo, select{
     border: solid 1px rgb(216, 216, 216)
 }
 
+#descricao-arquivo{
+    height: 75px;
+}
 
+textarea{
+    resize: none;
+}
 
 form label, input, select, form p{
     margin-top: 5px;
@@ -363,9 +373,12 @@ table td{
     border-bottom: 1px solid rgb(236, 236, 236);
 }
 
+.material-symbols-outlined{
+    cursor: pointer;
+}
 
 
-.botao-tornar-usuario-moderador{
+.botao-tornar-usuario-moderador, .aprovar-arquivo{
     background-color: white;
     color: #0d47a1;
     border: 1px solid #0d47a1;
@@ -374,13 +387,13 @@ table td{
     transition: all 0.6s;
 }
 
-.botao-tornar-usuario-moderador:hover{
+.botao-tornar-usuario-moderador:hover, .aprovar-arquivo:hover{
     background-color: #0d47a1;
     color: white;
     cursor: pointer;
 }
 
-.botao-retirar-papel-moderador{
+.botao-retirar-papel-moderador, .reprovar-arquivo{
     background-color: white;
     color: #a10d0d;
     border: 1px solid #a10d0d;
@@ -389,13 +402,19 @@ table td{
     transition: all 0.6s;
 }
 
-.botao-retirar-papel-moderador:hover{
+.botao-retirar-papel-moderador:hover, .reprovar-arquivo:hover{
     background-color: #a10d0d;
     color: white;
     cursor: pointer;
 }
 
-
+.icones{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    
+}
 
 
 #body-login{
