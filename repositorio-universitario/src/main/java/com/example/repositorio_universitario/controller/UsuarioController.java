@@ -14,10 +14,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -73,14 +70,14 @@ public class UsuarioController {
        return ResponseEntity.ok(moderadores);
     }
 
-    @PostMapping("/promover/{id}")
+    @PutMapping("/promover/{id}")
     public void promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.MODERADOR);
         usuarioRepository.save(usuario);
     }
 
-    @PostMapping("/retirar-papel/{id}")
+    @PutMapping("/retirar-papel/{id}")
     public void retirarPapel(@PathVariable("id") Integer id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         usuario.setFuncao(FuncaoUsuario.USUARIO);
