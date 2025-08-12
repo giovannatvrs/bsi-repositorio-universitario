@@ -729,6 +729,12 @@ fieldset legend {
 
 }
 
+@media(max-width: 750px) {
+    #nome-usuario{
+        display: none;
+    }
+}
+
  
 @media(max-width: 1000px){
     #apresentacao{
