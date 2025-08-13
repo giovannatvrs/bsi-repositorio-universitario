@@ -82,7 +82,7 @@ function atualizarNavegacao(data){
         else if (data.funcao == "MODERADOR"){
             paginas.innerHTML = `<a href="envios.html">Envios</a>
             <a href="/solicitacoes.html">Solicitações</a>
-            <a>Restrições</a>`
+            <a href="restricoes.html">Restrições</a>`
         }
         else{
             paginas.innerHTML = `<a href="envios.html">Envios</a>`
