@@ -56,11 +56,15 @@ public class UsuarioService {
         Pageable pageable = PageRequest.of(page, size);
         return usuarioRepository.findAll(pageable);
     }
-    public List<Usuario> listarUsuariosComuns(){
-        return usuarioRepository.findByFuncao(FuncaoUsuario.USUARIO);
+    public Page<Usuario> listarUsuariosComuns(int page){
+        int size = 2;
+        Pageable pageable = PageRequest.of(page, size);
+        return usuarioRepository.findByFuncao(FuncaoUsuario.USUARIO, pageable);
     }
-    public List<Usuario> listarModeradores() {
-        return  usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR);
+    public Page<Usuario> listarModeradores(int page) {
+        int size = 2;
+        Pageable pageable = PageRequest.of(page, size);
+        return  usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR, pageable);
     }
 
 }

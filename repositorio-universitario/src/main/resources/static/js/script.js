@@ -5,6 +5,7 @@ const botaoNovoArquivo = document.getElementById('novo');
 const popUp = document.getElementById('overlay');
 const fechar = document.getElementById('close');
 const cancelar = document.getElementById('cancelar');
+let paginaAtual = 0;
 if(listaDisciplinas){
     
     btnDisciplinas.addEventListener('click', function(){
@@ -88,21 +89,6 @@ function atualizarNavegacao(data){
             paginas.innerHTML = `<a href="envios.html">Envios</a>`
         }
 
-    }
-    else if(urlData == "/usuarios.html"){
-        paginas.innerHTML = `<a onclick="history.back()">Voltar</a>
-        <a>Histórico</a>
-        <a href="/moderadores.html">Moderadores</a>`
-    }
-    else if(urlData == "/moderadores.html"){
-        paginas.innerHTML = `<a onclick="history.back()">Voltar</a>
-        <a>Histórico</a>
-        <a href="/usuarios.html">Usuários</a>`
-    }
-    else if(urlData == "/solicitacoes.html"){
-        paginas.innerHTML = `<a onclick="history.back()">Voltar</a>
-        <a href="envios.html">Envios</a>
-        <a href="/usuarios.html">Restrições</a>`
     }
 
 }
@@ -298,7 +284,7 @@ function visualizarArquivo(){
     });
 }
 
-let paginaAtual = 0;
+
 async function listarUsuarios(pagina){
     paginaAtual = pagina;
     try{
@@ -337,7 +323,7 @@ async function listarUsuarios(pagina){
             for(let i = 0; i < data.totalPages; i++){
                 botoesPagina += `<button onclick="listarUsuarios(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`;
             }
-            document.getElementById("paginacao").innerHTML = botoesPagina;
+            document.getElementById("paginacao-usuarios").innerHTML = botoesPagina;
         }
         catch (error){
             console.error("Falha em carregar os dados dos usuários",error);
@@ -348,10 +334,11 @@ async function listarUsuarios(pagina){
     }
     document.addEventListener("DOMContentLoaded", listarUsuarios(0));
 
-
-async function listarModeradores(){
+async function listarUsuariosComuns(pagina){
+    paginaAtual = pagina;
     try{
-        const response = await fetch("/moderadores", {
+        const response = await fetch(`/usuarios-comuns?page=${pagina}`, {
+            method: 'GET',
             credentials: "include"
         });
         if(!response.ok){
@@ -359,17 +346,99 @@ async function listarModeradores(){
         }
         const data = await response.json();
         let info = '';
-        data.forEach(function (usuario){
+        data.content.forEach(function (usuario){
+            info += `<tr><td class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</td>
+            <td>${usuario.email}</td>
+            <td> ${usuario.suspenso === false ? `<button data-id="${usuario.id}" class="botao-suspender-usuario">Suspender usuário</button>` : 
+            `<button class="retirar-suspensao" data-id="${usuario.id}">Retirar suspensão</button>`}</td></tr>`
+        })
+        document.getElementById("lista-usuarios-restricao").innerHTML = info;
+        retirarSuspensao();
+        suspenderUsuario();
+         let botoesPagina = '';
+        for(let i = 0; i < data.totalPages; i++){
+            botoesPagina += `<button onclick="listarUsuariosComuns(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+        }
+        document.getElementById("paginacao-restricao").innerHTML = botoesPagina;
+    }catch(error){
+        console.error("Falha em carregar dados dos usuários", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", listarUsuariosComuns(0));
+
+function suspenderUsuario(){
+    document.querySelectorAll(".botao-suspender-usuario").forEach(button => {
+        button.addEventListener('click', async () =>{
+            const userId = button.getAttribute('data-id');
+            try{
+                const response = await fetch(`/suspender/${userId}`, {
+                    method: 'PUT',
+                    credentials: "include"
+                });
+                if(!response.ok){
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                alert("Usuário(a) suspenso");
+                window.location.reload();
+
+            }catch(error){
+                console.error("Falha em suspender usuário", error);
+            }
+        })
+    })
+}
+
+function retirarSuspensao(){
+    document.querySelectorAll(".retirar-suspensao").forEach(button => {
+        button.addEventListener('click', async() =>{
+            const userId = button.getAttribute('data-id');
+            try{
+                const response = await fetch(`/retirar-suspensao/${userId}`, {
+                    method: 'PUT',
+                    credentials: "include"
+                });
+                if(!response.ok){
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                alert("Suspensão retirada");
+                window.location.reload();
+
+            }catch(error){
+                console.error("Falha em retirar a suspensão do usuário", error);
+            }
+        })
+    })
+}
+
+async function listarModeradores(pagina){
+    paginaAtual = pagina;
+    try{
+        const response = await fetch(`/moderadores?page=${pagina}`, {
+            method: 'GET',
+            credentials: "include"
+        });
+        if(!response.ok){
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        let info = '';
+        data.content.forEach(function (usuario){
             info = `<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
-                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel moderador</button></td></tr>`
+                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel de moderador</button></td></tr>`
         })
             document.getElementById("lista-moderadores").innerHTML = info;
             ativarDesligamentoModerador();
+            let botoesPagina = '';
+            for(let i = 0; i < data.totalPages; i++){
+                botoesPagina += `<button onclick="listarModeradores(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+            }
+            document.getElementById("paginacao-moderadores").innerHTML = botoesPagina;
     }catch (error){
         console.error("Falha em carregar os dados dos moderadores", error);
     }
 }
-document.addEventListener("DOMContentLoaded", listarModeradores);
+document.addEventListener("DOMContentLoaded", listarModeradores(0));
 
 
 
@@ -389,7 +458,7 @@ function ativarPromocaoUsuarios(){
                     throw new Error(`Erro HTTP: ${response.status}`);
                 }
                 alert("Usuário(a) promovido com sucesso");
-                listarUsuarios();
+                window.location.reload();
             }catch(error){
                 console.error("Falha em promover usuário para moderador", error);
             }
