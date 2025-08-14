@@ -5,6 +5,9 @@ import com.example.repositorio_universitario.domain.Usuario;
 import com.example.repositorio_universitario.repository.UsuarioRepository;
 import org.hibernate.id.uuid.UuidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +51,10 @@ public class UsuarioService {
     public Usuario buscarPorEmail(String email){
         return usuarioRepository.findByEmail(email).get();
     }
-    public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+    public Page<Usuario> listarUsuarios(int page) {
+        int size = 2;
+        Pageable pageable = PageRequest.of(page, size);
+        return usuarioRepository.findAll(pageable);
     }
     public List<Usuario> listarUsuariosComuns(){
         return usuarioRepository.findByFuncao(FuncaoUsuario.USUARIO);

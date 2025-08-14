@@ -298,19 +298,20 @@ function visualizarArquivo(){
     });
 }
 
-
-async function listarUsuarios(){
+let paginaAtual = 0;
+async function listarUsuarios(pagina){
+    paginaAtual = pagina;
     try{
-        const response = await fetch("/usuarios",{
+        const response = await fetch(`/usuarios?page=${pagina}`,{
             credentials: "include"
         });
         if(!response.ok){
             throw new Error(`Erro HTTP: ${response.status}`);
         }
-        const data = await response.json();
+        let data = await response.json();
         let info = '';
         console.log(data);
-        data.forEach(function(usuario){
+        data.content.forEach(function(usuario){
             let papel = '';
             switch(usuario.funcao){
                     case "ADMINISTRADOR":
@@ -332,15 +333,20 @@ async function listarUsuarios(){
             })
             document.getElementById("lista-usuarios").innerHTML=info;
             ativarPromocaoUsuarios();
+            let botoesPagina = '';
+            for(let i = 0; i < data.totalPages; i++){
+                botoesPagina += `<button onclick="listarUsuarios(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`;
+            }
+            document.getElementById("paginacao").innerHTML = botoesPagina;
         }
         catch (error){
             console.error("Falha em carregar os dados dos usuários",error);
         }
 
 
-    }
-    document.addEventListener("DOMContentLoaded", listarUsuarios);
 
+    }
+    document.addEventListener("DOMContentLoaded", listarUsuarios(0));
 
 
 async function listarModeradores(){

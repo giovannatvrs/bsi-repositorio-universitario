@@ -7,6 +7,9 @@ import com.example.repositorio_universitario.domain.Usuario;
 import com.example.repositorio_universitario.repository.UsuarioRepository;
 import com.example.repositorio_universitario.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,8 +60,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/usuarios")
-    public ResponseEntity<List<Usuario>> usuarios() {
-        List<Usuario> usuarios = usuarioService.listarUsuarios();
+    public ResponseEntity<Page<Usuario>> usuarios(int page) {
+        Page<Usuario> usuarios = usuarioService.listarUsuarios(page);
         return ResponseEntity.ok(usuarios);
     }
 

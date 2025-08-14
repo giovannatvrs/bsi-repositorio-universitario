@@ -376,6 +376,28 @@ table td{
     cursor: pointer;
 }
 
+#paginacao{
+    margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+#paginacao button{
+    padding: 10px 16px;
+    background: white;
+}
+
+#paginacao button.ativa{
+    background: #0d47a1;
+    color: white;
+}
+
+#paginacao button:hover:not(.ativa){
+    background: #ddd;
+}
+
 
 .botao-tornar-usuario-moderador, .aprovar-arquivo{
     background-color: white;
