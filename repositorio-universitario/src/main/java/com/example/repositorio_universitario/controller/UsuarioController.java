@@ -62,7 +62,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarios);
     }
 
-
+    @GetMapping("/usuarios-comuns")
+    public ResponseEntity<List<Usuario>> usuariosComuns(){
+        List<Usuario> usuariosComuns = usuarioService.listarUsuariosComuns();
+        return ResponseEntity.ok(usuariosComuns);
+    }
 
     @GetMapping("/moderadores")
     public ResponseEntity<List<Usuario>> moderadores() {
@@ -83,6 +87,16 @@ public class UsuarioController {
         usuario.setFuncao(FuncaoUsuario.USUARIO);
         usuarioRepository.save(usuario);
     }
-
-
+    @PutMapping("/suspender/{id}")
+    public void suspenderUsuario(@PathVariable ("id") Integer id){
+        Usuario usuario = usuarioService.buscarPorId(id);
+        usuario.setSuspenso(true);
+        usuarioRepository.save(usuario);
+    }
+    @PutMapping("/tirar-suspensao/{id}")
+    public void retirarSuspensão(@PathVariable ("id") Integer id){
+        Usuario usuario = usuarioService.buscarPorId(id);
+        usuario.setSuspenso(false);
+        usuarioRepository.save(usuario);
+    }
 }

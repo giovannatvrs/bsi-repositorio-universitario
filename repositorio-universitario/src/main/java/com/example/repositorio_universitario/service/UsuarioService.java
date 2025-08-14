@@ -51,6 +51,9 @@ public class UsuarioService {
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
+    public List<Usuario> listarUsuariosComuns(){
+        return usuarioRepository.findByFuncao(FuncaoUsuario.USUARIO);
+    }
     public List<Usuario> listarModeradores() {
         return  usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR);
     }
