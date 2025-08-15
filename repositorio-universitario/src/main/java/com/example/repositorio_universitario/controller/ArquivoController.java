@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class ArquivoController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadArquivo(@RequestParam("file") MultipartFile file, @RequestParam("nome") String nome, @RequestParam("disciplina") String disciplina, @RequestParam("descricao") String descricao, @AuthenticationPrincipal CustomOAuth2User user) throws IOException {
         Usuario usuario = usuarioService.buscarPorEmail(user.getEmail());
+        if(usuario.isSuspenso()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         arquivoService.uploadFile(file, nome, disciplina, descricao, usuario);
         return ResponseEntity.ok("Upload de arquivo realizado com sucesso!");
     }
@@ -71,22 +75,22 @@ public class ArquivoController {
     }
 
     @GetMapping("/envios")
-    public ResponseEntity<List<Arquivo>> listarArquivosUsuario(@AuthenticationPrincipal CustomOAuth2User user) {
+    public ResponseEntity<Page<Arquivo>> listarArquivosUsuario(@AuthenticationPrincipal CustomOAuth2User user, int page) {
         Usuario usuario = usuarioService.buscarPorEmail(user.getEmail());
         int idUsuario = usuario.getId();
-        List<Arquivo> arquivosUsuario = arquivoService.listarArquivosUsuario(idUsuario);
+        Page<Arquivo> arquivosUsuario = arquivoService.listarArquivosUsuario(idUsuario, page);
         return ResponseEntity.ok(arquivosUsuario);
     }
 
     @GetMapping("/arquivos")
-    public ResponseEntity<List<Arquivo>> listarArquivos(){
-        List<Arquivo> arquivos = arquivoService.listarArquivos();
+    public ResponseEntity<Page<Arquivo>> listarArquivos(int page){
+        Page<Arquivo> arquivos = arquivoService.listarArquivos(page);
         return ResponseEntity.ok(arquivos);
     }
 
     @GetMapping("/solicitacoes")
-    public ResponseEntity<List<Arquivo>> listarArquivosPendentes() {
-        List<Arquivo> arquivosPendentes = arquivoService.listarArquivosPendentes();
+    public ResponseEntity<Page<Arquivo>> listarArquivosPendentes(int page) {
+        Page<Arquivo> arquivosPendentes = arquivoService.listarArquivosPendentes(page);
         return ResponseEntity.ok(arquivosPendentes);
     }
 

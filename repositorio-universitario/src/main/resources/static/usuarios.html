@@ -40,7 +40,7 @@
 
     </aside>
     <section id="main">
-        <h2>Usuários</h2>
+        <h2>Todos os Usuários</h2>
         <table id="tabela">
             <thead>
             <tr>
@@ -59,6 +59,56 @@
         </div>
     </section>
 </div>
+<script>
+    async function listarUsuarios(pagina){
+        paginaAtual = pagina;
+        try{
+            const response = await fetch(`/usuarios?page=${pagina}`,{
+                credentials: "include"
+            });
+            if(!response.ok){
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            let data = await response.json();
+            let info = '';
+            console.log(data);
+            data.content.forEach(function(usuario){
+                let papel = '';
+                switch(usuario.funcao){
+                    case "ADMINISTRADOR":
+                        papel = 'Administrador(a)';
+                        break;
+                    case "MODERADOR":
+                        papel = 'Moderador(a)';
+                        break;
+                    case "USUARIO":
+                        papel = 'Usuário(a)';
+                        break;
+                }
+
+                info +=`<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
+            <td>${usuario.email}</td><td>${papel}</td>
+
+            <td class="alterar-usuario"> ${papel === "Usuário(a)" ? `<button class="botao-tornar-usuario-moderador" data-id="${usuario.id}">Tornar usuário moderador</button>` : ``}</td></tr>`
+
+            })
+            document.getElementById("lista-usuarios").innerHTML=info;
+            ativarPromocaoUsuarios();
+            let botoesPagina = '';
+            for(let i = 0; i < data.totalPages; i++){
+                botoesPagina += `<button onclick="listarUsuarios(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`;
+            }
+            document.getElementById("paginacao-usuarios").innerHTML = botoesPagina;
+        }
+        catch (error){
+            console.error("Falha em carregar os dados dos usuários",error);
+        }
+
+
+
+    }
+    document.addEventListener("DOMContentLoaded", listarUsuarios(0));
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

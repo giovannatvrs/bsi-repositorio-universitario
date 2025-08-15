@@ -62,7 +62,7 @@ public class UsuarioService {
         return usuarioRepository.findByFuncao(FuncaoUsuario.USUARIO, pageable);
     }
     public Page<Usuario> listarModeradores(int page) {
-        int size = 2;
+        int size = 1;
         Pageable pageable = PageRequest.of(page, size);
         return  usuarioRepository.findByFuncao(FuncaoUsuario.MODERADOR, pageable);
     }

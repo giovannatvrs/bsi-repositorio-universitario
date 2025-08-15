@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Repositório Universitário - BSI UNIRIO</title>
+    <title>Moderadores - Repositório Universitário - BSI UNIRIO</title>
     <link rel="stylesheet" href="/css/style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -61,6 +61,36 @@
     </section>
 
 </div>
+<script>
+    async function listarModeradores(pagina){
+        paginaAtual = pagina;
+        try{
+            const response = await fetch(`/moderadores?page=${pagina}`, {
+                method: 'GET',
+                credentials: "include"
+            });
+            if(!response.ok){
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            const data = await response.json();
+            let info = '';
+            data.content.forEach(function (usuario){
+                info = `<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
+                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel de moderador</button></td></tr>`
+            })
+            document.getElementById("lista-moderadores").innerHTML = info;
+            ativarDesligamentoModerador();
+            let botoesPagina = '';
+            for(let i = 0; i < data.totalPages; i++){
+                botoesPagina += `<button onclick="listarModeradores(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+            }
+            document.getElementById("paginacao-moderadores").innerHTML = botoesPagina;
+        }catch (error){
+            console.error("Falha em carregar os dados dos moderadores", error);
+        }
+    }
+    document.addEventListener("DOMContentLoaded", listarModeradores(0));
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

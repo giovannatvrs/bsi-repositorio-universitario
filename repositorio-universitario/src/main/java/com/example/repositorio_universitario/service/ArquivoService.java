@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,17 +96,23 @@ public class ArquivoService {
         return arquivoRepository.findById(id).orElseThrow();
     }
 
-    public List<Arquivo> listarArquivos(){
-        return arquivoRepository.findByStatus(StatusArquivo.APROVADO);
+    public Page<Arquivo> listarArquivos(int page){
+        int size = 3;
+        Pageable pageable = PageRequest.of(page, size);
+        return arquivoRepository.findByStatus(StatusArquivo.APROVADO, pageable);
     }
 
-    public List<Arquivo> listarArquivosUsuario(int id){
+    public Page<Arquivo> listarArquivosUsuario(int id, int page){
+        int size = 3;
+        Pageable pageable = PageRequest.of(page, size);
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
-        return arquivoRepository.findByUsuario(usuario);
+        return arquivoRepository.findByUsuario(usuario, pageable);
     }
 
-    public List<Arquivo> listarArquivosPendentes(){
-        return arquivoRepository.findByStatus(StatusArquivo.PENDENTE);
+    public Page<Arquivo> listarArquivosPendentes(int page){
+        int size = 3;
+        Pageable pageable = PageRequest.of(page, size);
+        return arquivoRepository.findByStatus(StatusArquivo.PENDENTE, pageable);
     }
 
 }

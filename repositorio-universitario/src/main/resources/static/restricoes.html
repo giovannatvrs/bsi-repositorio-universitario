@@ -56,6 +56,40 @@
     </div>
   </section>
 </div>
+<script>
+  async function listarUsuariosComuns(pagina){
+    paginaAtual = pagina;
+    try{
+      const response = await fetch(`/usuarios-comuns?page=${pagina}`, {
+        method: 'GET',
+        credentials: "include"
+      });
+      if(!response.ok){
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      let info = '';
+      data.content.forEach(function (usuario){
+        info += `<tr><td class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</td>
+            <td>${usuario.email}</td>
+            <td> ${usuario.suspenso === false ? `<button data-id="${usuario.id}" class="botao-suspender-usuario">Suspender usuário</button>` :
+                `<button class="retirar-suspensao" data-id="${usuario.id}">Retirar suspensão</button>`}</td></tr>`
+      })
+      document.getElementById("lista-usuarios-restricao").innerHTML = info;
+      retirarSuspensao();
+      suspenderUsuario();
+      let botoesPagina = '';
+      for(let i = 0; i < data.totalPages; i++){
+        botoesPagina += `<button onclick="listarUsuariosComuns(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+      }
+      document.getElementById("paginacao-restricao").innerHTML = botoesPagina;
+    }catch(error){
+      console.error("Falha em carregar dados dos usuários", error);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", listarUsuariosComuns(0));
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

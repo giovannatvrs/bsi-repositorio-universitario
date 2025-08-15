@@ -54,8 +54,47 @@
 
             </tbody>
         </table>
+        <div id="paginacao-arquivos-usuario" class="paginacao">
+
+        </div>
     </section>
 </div>
+<script>
+    async function listarArquivosUsuario(pagina){
+        paginaAtual = pagina;
+        try{
+            const response = await fetch(`/envios?page=${pagina}`, {
+                credentials: "include"
+            });
+            if(!response.ok){
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            const data = await response.json();
+            let info = '';
+
+            data.content.forEach(function (arquivo){
+                info += `<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td>
+                        <td>${arquivo.status}</td><td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">
+                          description</span></td>
+                          <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td>
+                          <td><span class="material-symbols-outlined deletar-arquivo" data-id="${arquivo.id}">delete</span></td>
+                        </tr>`;
+            })
+            document.getElementById("lista-arquivos-usuario").innerHTML = info;
+            downloadArquivo();
+            visualizarArquivo();
+            deletarArquivo();
+            let botoesPaginas = '';
+            for(let i = 0; i < data.totalPages; i++){
+                botoesPaginas += `<button onclick="listarArquivosUsuario(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+            }
+            document.getElementById("paginacao-arquivos-usuario").innerHTML = botoesPaginas;
+        }catch (error){
+            console.error("Falha em carregar arquivos do usuário", error);
+        }
+    }
+    document.addEventListener("DOMContentLoaded", listarArquivosUsuario(0));
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

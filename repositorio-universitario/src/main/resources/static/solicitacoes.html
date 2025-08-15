@@ -35,7 +35,7 @@
     <div id="paginas">
       <a onclick="history.back()">Voltar</a>
       <a href="envios.html">Envios</a>
-      <a href="/usuarios.html">Restrições</a>
+      <a href="restricoes.html">Restrições</a>
     </div>
 
   </aside>
@@ -56,8 +56,46 @@
 
       </tbody>
     </table>
+    <div id="paginacao-solicitacoes" class="paginacao">
+
+    </div>
   </section>
 </div>
+<script>
+  async function listarArquivosPendentes(pagina){
+    paginaAtual = pagina;
+    try{
+      const response = await fetch(`/solicitacoes?page=${pagina}`,{
+        credentials: "include"
+      });
+      if(!response.ok){
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      let info = '';
+      data.content.forEach(function (arquivo){
+        info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
+                        <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
+                        <td><button class="aprovar-arquivo" data-id="${arquivo.id}">Aprovar</button></td>
+                        <td><button class="reprovar-arquivo" data-id="${arquivo.id}">Reprovar</button></td>
+                        </tr>`
+      })
+      document.getElementById("lista-arquivos-pendentes").innerHTML = info;
+      visualizarArquivo();
+      aprovarArquivo();
+      reprovarArquivo();
+      let botoesPagina = '';
+      for(let i = 0; i < data.totalPages; i++){
+        botoesPagina += `<button onclick="listarArquivosPendentes(${i})" class="${i === paginaAtual ? 'ativa': ''}">${i+1}</button>`
+      }
+      document.getElementById("paginacao-solicitacoes").innerHTML = botoesPagina;
+    }catch (error){
+      console.error("Falha em carregar arquivos", error);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded",  listarArquivosPendentes(0));
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

@@ -98,11 +98,12 @@ header{
 
     gap: 10px;
 
-    
 
 }
 
-
+.logo img{
+    height: 60px;
+}
 
 
 
@@ -400,7 +401,7 @@ table td{
 }
 
 
-.botao-tornar-usuario-moderador, .aprovar-arquivo{
+.botao-tornar-usuario-moderador{
     background-color: white;
     color: #0d47a1;
     border: 1px solid #0d47a1;
@@ -445,7 +446,7 @@ table td{
     cursor: pointer;
 }
 
-.retirar-suspensao{
+.retirar-suspensao, .aprovar-arquivo{
     background-color: white;
     color: rgb(2, 160, 2);
     border: 1px solid rgb(2, 160, 2);
@@ -454,7 +455,7 @@ table td{
     transition: all 0.5s;
 }
 
-.retirar-suspensao:hover{
+.retirar-suspensao:hover, .aprovar-arquivo:hover{
     cursor: pointer;
     background-color: rgb(2, 160, 2);
     color: white;

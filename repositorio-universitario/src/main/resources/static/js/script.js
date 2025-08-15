@@ -93,93 +93,9 @@ function atualizarNavegacao(data){
 
 }
 
-if(window.location.pathname == '/usuario.html'){
-    async function listarArquivos(){
-        try{
-            const response = await fetch("/arquivos", {
-                method: 'GET',
-                credentials: "include"
-            });
-            if(!response.ok){
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const data =  await response.json();
-            let info = '';
-            data.forEach(function (arquivo){
-                info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
-                <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td></tr>`
-            })
-            document.getElementById("lista-arquivos").innerHTML = info;
-            downloadArquivo();
-            visualizarArquivo();
-        }catch (error){
-            console.log("Falha em listar arquivos do repositório", error);
-        }
-    }
-    document.addEventListener("DOMContentLoaded", listarArquivos);
-}
 
-if (window.location.pathname == '/envios.html'){
-    async function listarArquivosUsuario(){
-        try{
-            const response = await fetch("/envios", {
-                credentials: "include"
-            });
-            if(!response.ok){
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const data = await response.json();
-            let info = '';
 
-            data.forEach(function (arquivo){
-                info += `<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td>
-                        <td>${arquivo.status}</td><td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">
-                          description</span></td>
-                          <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td>
-                          <td><span class="material-symbols-outlined deletar-arquivo" data-id="${arquivo.id}">delete</span></td>
-                        </tr>`;
-            })
-            document.getElementById("lista-arquivos-usuario").innerHTML = info;
-            downloadArquivo();
-            visualizarArquivo();
-            deletarArquivo();
-        }catch (error){
-            console.error("Falha em carregar arquivos do usuário", error);
-        }
-    }
-    document.addEventListener("DOMContentLoaded", listarArquivosUsuario);
-}
 
-if (window.location.pathname == '/solicitacoes.html'){
-    async function listarArquivosPendentes(){
-        try{
-            const response = await fetch("/solicitacoes",{
-                credentials: "include"
-            });
-            if(!response.ok){
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const data = await response.json();
-            let info = '';
-            data.forEach(function (arquivo){
-                info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                        <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
-                        <td><button class="aprovar-arquivo" data-id="${arquivo.id}">Aprovar</button></td>
-                        <td><button class="reprovar-arquivo" data-id="${arquivo.id}">Reprovar</button></td>
-                        </tr>`
-            })
-            document.getElementById("lista-arquivos-pendentes").innerHTML = info;
-            visualizarArquivo();
-            aprovarArquivo();
-            reprovarArquivo();
-        }catch (error){
-            console.error("Falha em carregar arquivos", error);
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", listarArquivosPendentes);
-}
 
 function reprovarArquivo(){
     document.querySelectorAll(".reprovar-arquivo").forEach(icon => {
@@ -285,87 +201,6 @@ function visualizarArquivo(){
 }
 
 
-async function listarUsuarios(pagina){
-    paginaAtual = pagina;
-    try{
-        const response = await fetch(`/usuarios?page=${pagina}`,{
-            credentials: "include"
-        });
-        if(!response.ok){
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        let data = await response.json();
-        let info = '';
-        console.log(data);
-        data.content.forEach(function(usuario){
-            let papel = '';
-            switch(usuario.funcao){
-                    case "ADMINISTRADOR":
-                    papel = 'Administrador(a)';
-                    break;
-                    case "MODERADOR":
-                        papel = 'Moderador(a)';
-                        break;
-                    case "USUARIO":
-                        papel = 'Usuário(a)';
-                        break;
-                }
-
-                info +=`<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
-            <td>${usuario.email}</td><td>${papel}</td>
-            
-            <td class="alterar-usuario"> ${papel === "Usuário(a)" ? `<button class="botao-tornar-usuario-moderador" data-id="${usuario.id}">Tornar usuário moderador</button>` : ``}</td></tr>`
-
-            })
-            document.getElementById("lista-usuarios").innerHTML=info;
-            ativarPromocaoUsuarios();
-            let botoesPagina = '';
-            for(let i = 0; i < data.totalPages; i++){
-                botoesPagina += `<button onclick="listarUsuarios(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`;
-            }
-            document.getElementById("paginacao-usuarios").innerHTML = botoesPagina;
-        }
-        catch (error){
-            console.error("Falha em carregar os dados dos usuários",error);
-        }
-
-
-
-    }
-    document.addEventListener("DOMContentLoaded", listarUsuarios(0));
-
-async function listarUsuariosComuns(pagina){
-    paginaAtual = pagina;
-    try{
-        const response = await fetch(`/usuarios-comuns?page=${pagina}`, {
-            method: 'GET',
-            credentials: "include"
-        });
-        if(!response.ok){
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-        let info = '';
-        data.content.forEach(function (usuario){
-            info += `<tr><td class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</td>
-            <td>${usuario.email}</td>
-            <td> ${usuario.suspenso === false ? `<button data-id="${usuario.id}" class="botao-suspender-usuario">Suspender usuário</button>` : 
-            `<button class="retirar-suspensao" data-id="${usuario.id}">Retirar suspensão</button>`}</td></tr>`
-        })
-        document.getElementById("lista-usuarios-restricao").innerHTML = info;
-        retirarSuspensao();
-        suspenderUsuario();
-         let botoesPagina = '';
-        for(let i = 0; i < data.totalPages; i++){
-            botoesPagina += `<button onclick="listarUsuariosComuns(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
-        }
-        document.getElementById("paginacao-restricao").innerHTML = botoesPagina;
-    }catch(error){
-        console.error("Falha em carregar dados dos usuários", error);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", listarUsuariosComuns(0));
 
 function suspenderUsuario(){
     document.querySelectorAll(".botao-suspender-usuario").forEach(button => {
@@ -411,34 +246,7 @@ function retirarSuspensao(){
     })
 }
 
-async function listarModeradores(pagina){
-    paginaAtual = pagina;
-    try{
-        const response = await fetch(`/moderadores?page=${pagina}`, {
-            method: 'GET',
-            credentials: "include"
-        });
-        if(!response.ok){
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        const data = await response.json();
-        let info = '';
-        data.content.forEach(function (usuario){
-            info = `<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
-                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel de moderador</button></td></tr>`
-        })
-            document.getElementById("lista-moderadores").innerHTML = info;
-            ativarDesligamentoModerador();
-            let botoesPagina = '';
-            for(let i = 0; i < data.totalPages; i++){
-                botoesPagina += `<button onclick="listarModeradores(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
-            }
-            document.getElementById("paginacao-moderadores").innerHTML = botoesPagina;
-    }catch (error){
-        console.error("Falha em carregar os dados dos moderadores", error);
-    }
-}
-document.addEventListener("DOMContentLoaded", listarModeradores(0));
+
 
 
 
@@ -479,7 +287,7 @@ function ativarDesligamentoModerador(){
                     throw new Error(`Erro HTTP: ${response.status}`);
                 }
                 alert("Papel de moderador retirado do usuário com sucesso");
-                listarModeradores();
+                window.location.reload();
             }catch(error){
                 console.error("Erro em retirar papel do moderador", error);
             }
@@ -508,15 +316,22 @@ function fazerUploadArquivo(){
                 credentials: "include",
                 body: formData
             });
-            if(!response.ok){
+            console.log(response.status);
+            if(response.status === 401){
+                alert("Não é possível realizar upload. Motivo: sua conta está suspensa");
+                window.location.reload();
+            }
+            else if(!response.ok){
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
-            arquivo.value = '';
-            nomeArquivo.value = '';
-            disciplina.value = '';
-            descricao.value = '';
-            alert("Arquivo enviado para avaliação");
-            window.location.reload();
+            else {
+                arquivo.value = '';
+                nomeArquivo.value = '';
+                disciplina.value = '';
+                descricao.value = '';
+                alert("Arquivo enviado para avaliação");
+                window.location.reload();
+            }
 
         }catch (error){
             console.error("Erro em realizar upload de arquivo", error);
