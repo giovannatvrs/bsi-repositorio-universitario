@@ -12,4 +12,6 @@ import java.util.List;
 public interface ArquivoRepository extends JpaRepository<Arquivo, Integer> {
     Page<Arquivo> findByStatus(StatusArquivo statusArquivo, Pageable pageable);
     Page<Arquivo> findByUsuario(Usuario usuario, Pageable pageable);
+    Page<Arquivo> findByDisciplinaAndStatus(String disciplina, StatusArquivo statusArquivo, Pageable pageable);
+
 }

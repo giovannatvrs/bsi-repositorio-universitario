@@ -108,4 +108,10 @@ public class ArquivoController {
         arquivoRepository.save(arquivo);
     }
 
+    @GetMapping("/arquivos/{disciplina}")
+    public ResponseEntity<Page<Arquivo>> listarArquivosDisciplina(@PathVariable("disciplina") String disciplina, int page){
+        Page<Arquivo> arquivosDisciplina = arquivoService.listarArquivosPorDisciplina(disciplina,StatusArquivo.APROVADO, page);
+        return ResponseEntity.ok(arquivosDisciplina);
+    }
+
 }

@@ -162,7 +162,15 @@
     </section>
 </div>
 <script>
+    paginaAtual = 0;
+    let disciplinaAtual = null;
+    document.addEventListener("DOMContentLoaded", () =>{
+        listarArquivos(0);
+        listarArquivosPorDisciplina();
+    });
+
     async function listarArquivos(pagina){
+        disciplinaAtual = null;
         paginaAtual = pagina;
         try{
             const response = await fetch(`/arquivos?page=${pagina}`, {
@@ -173,25 +181,75 @@
                 throw new Error(`Erro HTTP: ${response.status}`);
             }
             const data =  await response.json();
-            let info = '';
-            data.content.forEach(function (arquivo){
-                info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
-                <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td></tr>`
-            })
-            document.getElementById("lista-arquivos").innerHTML = info;
-            downloadArquivo();
-            visualizarArquivo();
-            let botoesPagina = '';
-            for(let i = 0; i < data.totalPages; i++){
-                botoesPagina += `<button onclick="listarArquivos(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
-            }
-            document.getElementById("paginacao-arquivos").innerHTML = botoesPagina;
+            renderArquivos(data);
         }catch (error){
             console.log("Falha em listar arquivos do repositório", error);
         }
     }
-    document.addEventListener("DOMContentLoaded", () => listarArquivos(0));
+
+
+    function listarArquivosPorDisciplina(){
+        document.querySelectorAll("#lista-disciplinas ul li").forEach(icon =>{
+            icon.addEventListener('click', async () =>{
+                const nomeDisciplina = icon.textContent.trim();
+                disciplinaAtual = nomeDisciplina;
+                paginaAtual = 0;
+                try {
+                    const response = await fetch(`/arquivos/${encodeURIComponent(disciplinaAtual)}?page=0`,{
+                        method: 'GET',
+                        credentials: "include"
+                    });
+                    if(!response.ok){
+                        throw new Error(`Erro HTTP: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    renderArquivos(data);
+                }catch (error){
+                    console.log(`Falha em listar arquivos de ${nomeDisciplina}`, error);
+                }
+            })
+        })
+    }
+
+    async function listarArquivosPorDisciplinaPagina(pagina){
+        if(!disciplinaAtual) return;
+        paginaAtual = pagina;
+        try {
+            const response = await fetch(`/arquivos/${encodeURIComponent(disciplinaAtual)}?page=${pagina}`,{
+                method: 'GET',
+                credentials: "include"
+            });
+            if(!response.ok){
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            const data = await response.json();
+            renderArquivos(data);
+        }catch (error){
+            console.log(`Falha em listar arquivos`, error);
+        }
+    }
+
+    function renderArquivos(data){
+        let info = '';
+        data.content.forEach(function (arquivo){
+            info+=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
+                        <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
+                        <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td></tr>`;
+        })
+        document.getElementById("lista-arquivos").innerHTML = info;
+        downloadArquivo();
+        visualizarArquivo();
+        let botoesPagina = '';
+        for(let i = 0; i < data.totalPages; i++){
+            if(disciplinaAtual){
+                botoesPagina += `<button onclick="listarArquivosPorDisciplinaPagina(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+            }else{
+                botoesPagina += `<button onclick="listarArquivos(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
+            }
+
+        }
+        document.getElementById("paginacao-arquivos").innerHTML = botoesPagina;
+    }
 </script>
 <script src="js/script.js"></script>
 </body>

@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +99,7 @@ public class ArquivoService {
 
     public Page<Arquivo> listarArquivos(int page){
         int size = 3;
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("data").descending());
         return arquivoRepository.findByStatus(StatusArquivo.APROVADO, pageable);
     }
 
@@ -113,6 +114,12 @@ public class ArquivoService {
         int size = 3;
         Pageable pageable = PageRequest.of(page, size);
         return arquivoRepository.findByStatus(StatusArquivo.PENDENTE, pageable);
+    }
+
+    public Page<Arquivo> listarArquivosPorDisciplina(String disciplina, StatusArquivo statusArquivo, int page){
+        int size = 3;
+        Pageable pageable = PageRequest.of(page, size);
+        return arquivoRepository.findByDisciplinaAndStatus(disciplina, statusArquivo, pageable);
     }
 
 }
