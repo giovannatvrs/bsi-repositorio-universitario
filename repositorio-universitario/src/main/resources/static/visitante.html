@@ -28,7 +28,10 @@
 <div id="container">
   <aside>
     <div id="conteudo">
-      <h3 id="btn-disciplinas">Disciplinas ⯆</h3>
+      <span class="filtro-disciplina">
+            <h3 id="btn-disciplinas">Disciplinas</h3>
+            <span class="material-symbols-outlined">keyboard_arrow_down</span>
+      </span>
       <div id="lista-disciplinas">
         <ul>
           <li>Álgebra Linear</li>
@@ -90,38 +93,7 @@
   </section>
 
 </div>
-<script>
-  async function listarArquivos(pagina){
-    paginaAtual = pagina;
-    try{
-      const response = await fetch(`/arquivos?page=${pagina}`, {
-        method: 'GET',
-        credentials: "include"
-      });
-      if(!response.ok){
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      const data =  await response.json();
-      let info = '';
-      data.content.forEach(function (arquivo){
-        info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
-                <td><span class="material-symbols-outlined botao-download" data-id="${arquivo.id}" data-nome="${arquivo.nome_real_arquivo}"">download</span></td></tr>`
-      })
-      document.getElementById("lista-arquivos").innerHTML = info;
-      downloadArquivo();
-      visualizarArquivo();
-      let botoesPagina = '';
-      for(let i = 0; i < data.totalPages; i++){
-        botoesPagina += `<button onclick="listarArquivos(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
-      }
-      document.getElementById("paginacao-arquivos").innerHTML = botoesPagina;
-    }catch (error){
-      console.log("Falha em listar arquivos do repositório", error);
-    }
-  }
-  document.addEventListener("DOMContentLoaded", () => listarArquivos(0));
-</script>
 <script src="/js/script.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>
