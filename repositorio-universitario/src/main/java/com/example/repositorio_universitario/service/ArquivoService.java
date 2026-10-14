@@ -3,8 +3,10 @@ package com.example.repositorio_universitario.service;
 
 import com.example.repositorio_universitario.Enums.StatusArquivo;
 import com.example.repositorio_universitario.domain.Arquivo;
+import com.example.repositorio_universitario.domain.HistoricoArquivo;
 import com.example.repositorio_universitario.domain.Usuario;
 import com.example.repositorio_universitario.repository.ArquivoRepository;
+import com.example.repositorio_universitario.repository.HistoricoArquivoRepository;
 import com.example.repositorio_universitario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -41,6 +46,9 @@ public class ArquivoService {
     @Value("${aws.s3.bucket}")
     private String bucket;
 
+    @Value("${aws.region}")
+    private String region;
+
     @Autowired
     private S3Client s3Client;
 
@@ -50,13 +58,19 @@ public class ArquivoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public void uploadFile(MultipartFile file, String nome, String disciplina, String descricao, Usuario usuario) throws IOException{
+    @Autowired
+    private HistoricoService historicoService;
+
+    @Autowired
+    private HistoricoArquivoRepository historicoArquivoRepository;
+
+    public Arquivo uploadFile(MultipartFile file, String nome, String disciplina, String descricao, Usuario usuario) throws IOException{
         String fileName = UUID.randomUUID() + "-"+ file.getOriginalFilename();
 
         s3Client.putObject(PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName).build(), RequestBody.fromBytes(file.getBytes()));
-        String url = "https://"+bucket+".s3.amazonaws.com/"+fileName;
+        String url = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
         Arquivo arquivo = new Arquivo();
         arquivo.setNome(nome);
         arquivo.setNome_real_arquivo(fileName);
@@ -70,8 +84,23 @@ public class ArquivoService {
         String tipoMime = file.getContentType();
         arquivo.setTipoMime(tipoMime != null ? tipoMime : "application/octet-stream");
 
-        arquivoRepository.save(arquivo);
+        return arquivoRepository.save(arquivo);
     }
+
+
+    public Arquivo buscarArquivoDisponivel(int id) {
+        Arquivo arquivo = getArquivo(id);
+
+        if (arquivo.getStatus() == StatusArquivo.REPROVADO) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Este arquivo foi reprovado e não está disponível para acesso."
+            );
+        }
+
+        return arquivo;
+    }
+
 
     public byte[] downloadFile(String key) {
         ResponseBytes<GetObjectResponse> objectAsBytes = s3Client.getObjectAsBytes(GetObjectRequest.builder()
@@ -81,9 +110,31 @@ public class ArquivoService {
         return objectAsBytes.asByteArray();
     }
 
+    @Transactional
+    public void deletarArquivo(int id, Usuario responsavel){
+        Arquivo arquivo = getArquivo(id);
+        if(arquivo.getUsuario()== null || !arquivo.getUsuario().getId().equals(responsavel.getId())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não possui permissão para deletar o arquivo");
+        }
 
-    public void deletarArquivo(int id){
-        Arquivo arquivo = arquivoRepository.findById(id).orElseThrow();
+        historicoService.registrarAcaoArquivo(
+                "EXCLUSAO", arquivo, responsavel
+        );
+
+        List<HistoricoArquivo> historicos =
+                historicoArquivoRepository.findByArquivo_Id(arquivo.getId());
+
+        for (HistoricoArquivo historico : historicos) {
+            historico.setArquivo(null);
+        }
+
+        historicoArquivoRepository.saveAll(historicos);
+        historicoArquivoRepository.flush();
+
+        // Exclui o registro do banco.
+        arquivoRepository.delete(arquivo);
+        arquivoRepository.flush();
+
         String key = arquivo.getUrl().substring(arquivo.getUrl().lastIndexOf("/") + 1);
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(bucket)
@@ -91,6 +142,54 @@ public class ArquivoService {
                 .build());
         arquivoRepository.delete(arquivo);
 
+    }
+
+
+    public void avaliarArquivo(
+            int id,
+            Usuario moderador,
+            StatusArquivo novoStatus) {
+
+
+
+        Arquivo arquivo = getArquivo(id);
+
+        if (arquivo.getUsuario() != null
+                && arquivo.getUsuario().getId().equals(moderador.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Moderadores não podem avaliar os próprios arquivos."
+            );
+        }
+
+        String nomeAcao;
+
+        if (novoStatus == StatusArquivo.APROVADO) {
+            nomeAcao = "APROVACAO";
+        } else if (novoStatus == StatusArquivo.REPROVADO) {
+            nomeAcao = "REPROVACAO";
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Status de avaliação inválido."
+            );
+        }
+
+        arquivo.setStatus(novoStatus);
+        arquivoRepository.save(arquivo);
+
+        historicoService.registrarAcaoArquivo(
+                nomeAcao,
+                arquivo,
+                moderador
+        );
+
+        if (novoStatus == StatusArquivo.REPROVADO) {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(arquivo.getNome_real_arquivo())
+                    .build());
+        }
     }
 
     public Arquivo getArquivo(int id){

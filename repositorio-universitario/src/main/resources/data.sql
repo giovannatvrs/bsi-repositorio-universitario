@@ -1,0 +1,9 @@
+INSERT INTO tb_acao (nome_acao) VALUES ('UPLOAD');
+INSERT INTO tb_acao (nome_acao) VALUES ('DOWNLOAD');
+INSERT INTO tb_acao (nome_acao) VALUES ('EXCLUSAO');
+INSERT INTO tb_acao (nome_acao) VALUES ('APROVACAO');
+INSERT INTO tb_acao (nome_acao) VALUES ('REPROVACAO');
+INSERT INTO tb_acao (nome_acao) VALUES ('SUSPENSAO');
+INSERT INTO tb_acao (nome_acao) VALUES ('RETIRADA_SUSPENSAO');
+INSERT INTO tb_acao (nome_acao) VALUES ('CONCESSAO_PAPEL');
+INSERT INTO tb_acao (nome_acao) VALUES ('REMOCAO_PAPEL');

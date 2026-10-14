@@ -84,6 +84,32 @@ header{
 
 }
 
+.notificacao {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+.notificacao.error {
+    background-color: #e64432;
+}
+
+.notificacao.success {
+    background-color: #29a74f;
+}
+
+.notificacao.alert{
+    background-color: rgb(236, 162, 25);
+}
+
 #link-login{
     font-size: 1rem;
     font-weight: 500;
@@ -96,16 +122,16 @@ header{
 
     align-items: center;
 
-    gap: 10px;
-
 
 }
 
 .logo img{
-    height: 60px;
+    height: 40px;
 }
 
-
+.menu-perfil{
+    position: relative;
+}
 
 .informacoes-perfil{
     display: flex;
@@ -130,6 +156,80 @@ header{
     border-radius: 30px;
 }
 
+
+#seta-mais-opcoes {
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#seta-mais-opcoes:hover {
+    background-color: #eaeaea;
+    color: #333;
+}
+
+
+
+.opcoes{
+    display: none;
+    align-items: center;
+    background-color: white;
+    color: #333;
+    padding: 8px 4px;
+    border-radius: 6px;
+    width: 190px;
+    position: absolute;
+    top: calc(100% + 15px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.opcoes div{
+    padding: 5px 2px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.logout:hover{
+    background-color: #fff1f0;
+    color: #c62828;
+}
+
+.opcoes.visivel{
+    display: flex;
+}
+
+.logout{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    gap: 8px;
+}
+
+
+logout{
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 12px 16px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    cursor: pointer;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+
+
 #container{
     display: flex;
     flex-direction: row;
@@ -149,6 +249,18 @@ aside{
     gap: 20px;
 }
 
+.filtro-disciplina{
+    display: flex;
+    align-items: center;
+    color: #0d47a1;
+    padding: 12px 5px;
+    border-radius: 6px;
+    gap: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.filtro-disciplina:hover{
+    background-color: #eaf2f8;
+}
 
 
 /*Botão de upload da página*/
@@ -286,23 +398,68 @@ form label, input, select, form p, textarea{
     color:#0d47a1;
 }
 
-#paginas{
+
+
+#paginas {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 6px;
 }
+
+#paginas a {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    padding: 12px 5px;
+    border-radius: 8px;
+
+    color: #454b57;
+    text-decoration: none;
+    font-weight: 500;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        padding-left 0.2s ease;
+}
+
+#paginas a:hover {
+    background-color: #eaf2f8;
+    color: #245b7a;
+    padding-left: 19px;
+}
+
+/* Indicador da opção selecionada */
+#paginas a.ativa {
+    background-color: #eaf2f8;
+    color: #245b7a;
+    font-weight: 600;
+}
+
+#paginas a.ativa::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 3px;
+    background-color: #245b7a;
+    border-radius: 0 4px 4px 0;
+}
+
 
 #btn-disciplinas:hover{
     cursor: pointer;
 }
 
 #lista-disciplinas{
-    font-family: "Segoe UI", "Segoe", "SegoeUI-Regular-final", Tahoma, Helvetica, Arial, sans-serif;
     max-height: 0;
     overflow: auto;
     scrollbar-width: thin;
-    scrollbar-color: #90caf9 #ffff;
+    scrollbar-color: #90caf9;
     transition: max-height 0.4s ease;
+    margin-left: 5px;
 }
 
 #lista-disciplinas.ativa{
@@ -321,7 +478,6 @@ form label, input, select, form p, textarea{
     background-color: #e3f2fd;
     border-radius: 6px;
 }
-
 
 
 #lista-disciplinas::-webkit-scrollbar-thumb{

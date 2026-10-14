@@ -18,20 +18,30 @@
     <div class="logo">
         <img src="../fotos/cropped-bsi-logomarcaV01.png" alt="Logotipo do curso de BSI da UNIRIO" id="imagem-logo">
         <h1>
-            <a href="usuario.html">
+            <a href="home.html">
 
                 <span class="linha1">REPOSITÓRIO</span>
                 <span class="linha2">UNIVERSITÁRIO</span>
             </a>
         </h1>
     </div>
-    <div class="informacoes-perfil">
-
-        <img id="foto-perfil" alt="Foto de perfil">
-        <span  id="nome-usuario"></span>
+    <div class="menu-perfil">
+        <div class="informacoes-perfil">
+            <img src="" id="foto-perfil" referrerpolicy="no-referrer" alt="Foto de perfil do usuário">
+            <span id="nome-usuario"></span>
+            <span class="material-symbols-outlined" id="seta-mais-opcoes">keyboard_arrow_down</span>
+        </div>
+        <div class="opcoes">
+            <div class="logout">
+                <span class="material-symbols-outlined">logout</span>
+                <a href="/logout">Sair</a>
+            </div>
+        </div>
     </div>
 
 </header>
+<div class="notificacao">
+</div>
 <div id="container">
     <aside>
         <div id="paginas">
@@ -61,36 +71,7 @@
     </section>
 
 </div>
-<script>
-    async function listarModeradores(pagina){
-        paginaAtual = pagina;
-        try{
-            const response = await fetch(`/moderadores?page=${pagina}`, {
-                method: 'GET',
-                credentials: "include"
-            });
-            if(!response.ok){
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const data = await response.json();
-            let info = '';
-            data.content.forEach(function (usuario){
-                info = `<tr><td><div class="informacoes-perfil"><img src="${usuario.url_foto}">${usuario.nome}</div></td>
-                 <td>${usuario.email}</td><td><button class="botao-retirar-papel-moderador" data-id="${usuario.id}">Tirar papel de moderador</button></td></tr>`
-            })
-            document.getElementById("lista-moderadores").innerHTML = info;
-            ativarDesligamentoModerador();
-            let botoesPagina = '';
-            for(let i = 0; i < data.totalPages; i++){
-                botoesPagina += `<button onclick="listarModeradores(${i})" class="${i === paginaAtual ? 'ativa' : ''}">${i+1}</button>`
-            }
-            document.getElementById("paginacao-moderadores").innerHTML = botoesPagina;
-        }catch (error){
-            console.error("Falha em carregar os dados dos moderadores", error);
-        }
-    }
-    document.addEventListener("DOMContentLoaded", listarModeradores(0));
-</script>
+<script src="js/acoes-admin.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

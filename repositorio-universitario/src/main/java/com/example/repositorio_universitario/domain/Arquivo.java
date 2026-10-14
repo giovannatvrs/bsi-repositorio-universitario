@@ -20,7 +20,7 @@ public class Arquivo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id_arquivo")
-    private int id;
+    private Integer id;
 
     @Column(name="nome_real_arquivo")
     private String nome_real_arquivo;

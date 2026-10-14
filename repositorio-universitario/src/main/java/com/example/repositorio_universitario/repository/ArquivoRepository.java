@@ -6,9 +6,10 @@ import com.example.repositorio_universitario.domain.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface ArquivoRepository extends JpaRepository<Arquivo, Integer> {
     Page<Arquivo> findByStatus(StatusArquivo statusArquivo, Pageable pageable);
     Page<Arquivo> findByUsuario(Usuario usuario, Pageable pageable);

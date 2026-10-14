@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login - Repositório Universitário - BSI UNIRIO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <title>Login - BSI Repositório Universitário </title>
 
-    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/login.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
@@ -13,36 +14,44 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
 </head>
-<body id="body-login">
-<div id="conteudo-pagina-login">
-    <div id="apresentacao">
-        <div id="titulo">
-            <h2>Bem vindo(a)!</h2>
-        </div>
-    </div>
-    <div id="login">
-        <div id="logo-login">
-            <img src="fotos/bsi-logo.png" alt="Logo do BSI UNIRIO" />
-            <h1>
-                <span class="linha1">REPOSITÓRIO</span>
-                <span class="linha2">UNIVERSITÁRIO</span>
-            </h1>
-        </div>
-        <div id="form-login">
-            <h2>Login</h2>
-            <a href="http://localhost:8080/oauth2/authorization/google" class="google-btn">
-                <img src="fotos/google-logo.svg" alt="Google">
-                <span>Fazer Login com o Google</span>
-            </a>
-            <p>Realize o login utilizando seu e-mail institucional da UNIRIO.</p>
-            <p id="espaco">Qualquer outro e-mail usado não será aceito.</p>
-            <fieldset><legend>ou</legend></fieldset>
-            <div id="link">
-                <a href="visitante.html">Continue como visitante</a>
+<body>
+    <div class="container">
+        <section class="left-section">
+            <div id="logo-login">
+                <img src="fotos/cropped-bsi-logomarcaV01.png" alt="Logo do BSI UNIRIO" />
+                <h1>
+                    <span class="linha1">REPOSITÓRIO</span>
+                    <span class="linha2">UNIVERSITÁRIO</span>
+                </h1>
             </div>
-        </div>
+            <div class="text-container">
+                <span class="slogan">
+                    O conhecimento
+                    <br>
+                    fica melhor 
+                    <br>
+                <span class="highlight">quando é<br>compartilhado</span>
+            </div>
+            <p>Uma boa ideia, um resumo que ajuda, aquele PDF que salva.<br>Aqui, a gente aprende junto e melhor.</p>
+            <img class="study-art" src="fotos/books.png" width="1200" height="800" alt="Livros e caderno aberto com diagramas de sistemas e um lápis coral">
+        </section>
+        <section class="right-section">
+            <div class="access-painel">
+                <h2 class="slogan">Que bom ter você aqui.</h2>
+                <span>Entre para compartilhar o que você sabe e descobrir o que ainda pode aprender.</span>
+                <a href="http://localhost:8080/oauth2/authorization/google" class="google-btn">
+                        <img src="fotos/google-logo.svg" alt="Google">
+                        <span>Fazer Login com o Google</span>
+                </a>
+                <div class="institution-note">
+                    <span>Use seu e-mail institucional da UNIRIO.<br>Assim, mantemos nosso espaço seguro e conectado à comunidade.</span>            
+                </div>
+                <div class="divider">
+                    <span>ou</span>
+                </div>
+                <a class="visitor-btn" href="visitante.html">Continue como visitante</a>
+            </div>
+        </section>
     </div>
-</div>
-
 </body>
 </html>

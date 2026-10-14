@@ -38,9 +38,10 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/", "/login", "/login.html", "/css/**", "/fotos/**", "/visitante.html", "/js/**").permitAll()
+                        .requestMatchers("/", "/login.html", "/css/**", "/fotos/**", "/visitante.html", "/js/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login.html")
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler))
                 .logout(logout -> logout
@@ -51,7 +52,7 @@ public class SecurityConfig {
                         .permitAll())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) ->{
-                            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.sendRedirect("/login.html");
                         })
                         .accessDeniedHandler((req, res, e) -> {
                             res.sendError(HttpServletResponse.SC_FORBIDDEN);

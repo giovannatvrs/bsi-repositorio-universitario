@@ -6,6 +6,7 @@ import com.example.repositorio_universitario.domain.Arquivo;
 import com.example.repositorio_universitario.domain.Usuario;
 import com.example.repositorio_universitario.repository.ArquivoRepository;
 import com.example.repositorio_universitario.service.ArquivoService;
+import com.example.repositorio_universitario.service.HistoricoService;
 import com.example.repositorio_universitario.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
@@ -33,34 +35,70 @@ public class ArquivoController {
     @Autowired
     private ArquivoRepository arquivoRepository;
 
+    @Autowired
+    private HistoricoService historicoService;
+
     @PostMapping("/upload")
     public ResponseEntity<String> uploadArquivo(@RequestParam("file") MultipartFile file, @RequestParam("nome") String nome, @RequestParam("disciplina") String disciplina, @RequestParam("descricao") String descricao, @AuthenticationPrincipal CustomOAuth2User user) throws IOException {
         Usuario usuario = usuarioService.buscarPorEmail(user.getEmail());
         if(usuario.isSuspenso()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        arquivoService.uploadFile(file, nome, disciplina, descricao, usuario);
+
+        Arquivo arquivo = arquivoService.uploadFile(
+                file, nome, disciplina, descricao, usuario
+        );
+
+        historicoService.registrarAcaoArquivo(
+                "UPLOAD", arquivo, usuario
+        );
+
         return ResponseEntity.ok("Upload de arquivo realizado com sucesso!");
+
     }
 
     @GetMapping("/visualizar/{id}")
     public ResponseEntity<byte[]> visualizarArquivo(@PathVariable int id) {
+        arquivoService.buscarArquivoDisponivel(id);
         Arquivo arquivo = arquivoService.getArquivo(id);
 
+        byte[] data = arquivoService.downloadFile(arquivo.getNome_real_arquivo());
+
+        // Fallback para tipoMime caso esteja nulo no banco
+        String tipoMime = arquivo.getTipoMime();
+        if (tipoMime == null || tipoMime.isBlank()) {
+            tipoMime = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(arquivo.getTipoMime())); // ex: "application/pdf"
-        headers.setContentDisposition(ContentDisposition.inline().filename(arquivo.getNome_real_arquivo()).build());
-        byte[] data= arquivoService.downloadFile(arquivo.getNome_real_arquivo());
+        headers.setContentType(MediaType.parseMediaType(tipoMime));
+
+        // "inline" indica ao navegador para tentar renderizar (imagem, vídeo, PDF, etc.)
+        headers.setContentDisposition(
+                ContentDisposition.inline()
+                        .filename(arquivo.getNome_real_arquivo())
+                        .build()
+        );
 
         return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> downloadArquivo(@PathVariable("id") int id) {
+    public ResponseEntity<byte[]> downloadArquivo(@PathVariable("id") int id, @AuthenticationPrincipal CustomOAuth2User user) {
+        arquivoService.buscarArquivoDisponivel(id);
         Arquivo arquivo = arquivoService.getArquivo(id);
+
         byte[] data= arquivoService.downloadFile(arquivo.getNome_real_arquivo());
 
         String contentType = "application/octet-stream";
+
+        if (user != null) {
+            Usuario responsavel = usuarioService.buscarPorEmail(user.getEmail());
+
+            historicoService.registrarAcaoArquivo(
+                    "DOWNLOAD", arquivo, responsavel
+            );
+        }
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + arquivo.getNome()+"\"")
@@ -69,8 +107,21 @@ public class ArquivoController {
     }
 
     @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<String> deleteArquivo(@PathVariable("id") int id) {
-        arquivoService.deletarArquivo(id);
+    public ResponseEntity<String> deleteArquivo(
+            @PathVariable("id") int id,
+            @AuthenticationPrincipal CustomOAuth2User user) {
+
+        arquivoService.buscarArquivoDisponivel(id);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Usuário não autenticado.");
+        }
+
+        Usuario responsavel = usuarioService.buscarPorEmail(user.getEmail());
+
+        arquivoService.deletarArquivo(id, responsavel);
+
         return ResponseEntity.ok("Deletado com sucesso!");
     }
 
@@ -95,17 +146,27 @@ public class ArquivoController {
     }
 
     @PutMapping("/aprovar/{id}")
-    public void aprovarArquivo(@PathVariable ("id") int id){
-        Arquivo arquivo = arquivoService.getArquivo(id);
-        arquivo.setStatus(StatusArquivo.APROVADO);
-        arquivoRepository.save(arquivo);
+    public ResponseEntity<Void> aprovarArquivo(@PathVariable ("id") int id, @AuthenticationPrincipal CustomOAuth2User user){
+        if (user == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Usuario moderador = usuarioService.buscarPorEmail(user.getEmail());
+
+        arquivoService.avaliarArquivo(id, moderador, StatusArquivo.APROVADO);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reprovar/{id}")
-    public void reprovarArquivo(@PathVariable ("id") int id){
-        Arquivo arquivo = arquivoService.getArquivo(id);
-        arquivo.setStatus(StatusArquivo.REPROVADO);
-        arquivoRepository.save(arquivo);
+    public ResponseEntity<Void> reprovarArquivo(@PathVariable ("id") int id, @AuthenticationPrincipal CustomOAuth2User user){
+        if (user == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Usuario moderador = usuarioService.buscarPorEmail(user.getEmail());
+
+        arquivoService.avaliarArquivo(id, moderador, StatusArquivo.REPROVADO);
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/arquivos/{disciplina}")

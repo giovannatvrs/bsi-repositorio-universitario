@@ -18,18 +18,30 @@
   <div class="logo">
     <img src="../fotos/cropped-bsi-logomarcaV01.png" alt="Logotipo do curso de BSI da UNIRIO" id="imagem-logo">
     <h1>
-      <a href="usuario.html">
+      <a href="home.html">
         <span class="linha1">REPOSITÓRIO</span>
         <span class="linha2">UNIVERSITÁRIO</span>
       </a>
     </h1>
   </div>
-  <div class="informacoes-perfil">
-    <img id="foto-perfil" alt="Foto de perfil">
-    <span  id="nome-usuario"></span>
-  </div>
+  <div class="menu-perfil">
+        <div class="informacoes-perfil">
+            <img src="" id="foto-perfil">
+            <span id="nome-usuario"></span>
+            <span class="material-symbols-outlined" id="seta-mais-opcoes" referrerpolicy="no-referrer" alt="Foto de perfil do usuário">keyboard_arrow_down</span>
+        </div>
+        <div class="opcoes">
+            <div class="logout">
+                <span class="material-symbols-outlined">logout</span>
+                <a href="/logout">Sair</a>
+            </div>
+        </div>
+    </div>
 
 </header>
+<div class="notificacao">
+
+</div>
 <div id="container">
   <aside>
     <div id="paginas">
@@ -47,6 +59,7 @@
         <th>Nome</th>
         <th>Disciplina</th>
         <th>Data</th>
+        <th>Usuario</th>
         <th></th>
         <th></th>
         <th></th>
@@ -61,41 +74,7 @@
     </div>
   </section>
 </div>
-<script>
-  async function listarArquivosPendentes(pagina){
-    paginaAtual = pagina;
-    try{
-      const response = await fetch(`/solicitacoes?page=${pagina}`,{
-        credentials: "include"
-      });
-      if(!response.ok){
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      const data = await response.json();
-      let info = '';
-      data.content.forEach(function (arquivo){
-        info +=`<tr><td>${arquivo.nome}</td><td>${arquivo.disciplina}</td><td>${arquivo.data}</td>
-                        <td><span class="material-symbols-outlined botao-visualizar" data-id="${arquivo.id}">description</span></td>
-                        <td><button class="aprovar-arquivo" data-id="${arquivo.id}">Aprovar</button></td>
-                        <td><button class="reprovar-arquivo" data-id="${arquivo.id}">Reprovar</button></td>
-                        </tr>`
-      })
-      document.getElementById("lista-arquivos-pendentes").innerHTML = info;
-      visualizarArquivo();
-      aprovarArquivo();
-      reprovarArquivo();
-      let botoesPagina = '';
-      for(let i = 0; i < data.totalPages; i++){
-        botoesPagina += `<button onclick="listarArquivosPendentes(${i})" class="${i === paginaAtual ? 'ativa': ''}">${i+1}</button>`
-      }
-      document.getElementById("paginacao-solicitacoes").innerHTML = botoesPagina;
-    }catch (error){
-      console.error("Falha em carregar arquivos", error);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded",  listarArquivosPendentes(0));
-</script>
+<script src="js/acoes-mod.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

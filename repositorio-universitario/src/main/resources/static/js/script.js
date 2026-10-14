@@ -1,6 +1,6 @@
 
 const listaDisciplinas = document.getElementById('lista-disciplinas');
-const btnDisciplinas = document.getElementById('btn-disciplinas');
+const btnDisciplinas = document.querySelector('.filtro-disciplina');
 const botaoNovoArquivo = document.getElementById('novo');
 const popUp = document.getElementById('overlay');
 const fechar = document.getElementById('close');
@@ -25,6 +25,13 @@ if(popUp){
     })
 
 }
+
+const seta = document.querySelector('#seta-mais-opcoes');
+const opcoes = document.querySelector('.opcoes');
+
+seta.addEventListener('click', () => {
+  opcoes.classList.toggle('visivel');
+});
 
 
 
@@ -70,97 +77,56 @@ document.addEventListener("DOMContentLoaded", fetchData);
 
 
 
-function atualizarNavegacao(data){
-    var urlData= window.location.pathname;
-    const paginas = document.getElementById("paginas");
-    if (urlData == "/usuario.html"){
-        if(data.funcao=="ADMINISTRADOR"){
-            paginas.innerHTML = `<a>Histórico</a>
-            <a href="envios.html">Envios</a>
-            <a href="/usuarios.html">Usuários</a>
-            <a href="/moderadores.html">Moderadores</a>`
-        }
-        else if (data.funcao == "MODERADOR"){
-            paginas.innerHTML = `<a href="envios.html">Envios</a>
-            <a href="/solicitacoes.html">Solicitações</a>
-            <a href="restricoes.html">Restrições</a>`
-        }
-        else{
-            paginas.innerHTML = `<a href="envios.html">Envios</a>`
-        }
 
+function atualizarNavegacao(data) {
+    const paginas = document.getElementById("paginas");
+    if (!paginas) return;
+
+    const funcao = data.funcao;
+    const caminhoAtual = window.location.pathname;
+
+    let links = [];
+    if (caminhoAtual !== "/home.html") {
+        links.push({
+            texto: "Início",
+            href: "/home.html"
+        });
     }
 
+    if (funcao === "ADMINISTRADOR") {
+        links.push(
+            { texto: "Histórico", href: "/historico.html" },
+            { texto: "Envios", href: "/envios.html" },
+            { texto: "Usuários", href: "/usuarios.html" },
+            { texto: "Moderadores", href: "/moderadores.html" }
+        );
+    } else if (funcao === "MODERADOR") {
+        links.push(
+            { texto: "Histórico", href: "/historico.html" },
+            { texto: "Envios", href: "/envios.html" },
+            { texto: "Solicitações", href: "/solicitacoes.html" },
+            { texto: "Restrições", href: "/restricoes.html" }
+        );
+    } else {
+        links.push(
+            { texto: "Histórico", href: "/historico.html" },
+            { texto: "Envios", href: "/envios.html" }
+        );
+    }
+
+    paginas.innerHTML = links.map(link => {
+        const ativa = caminhoAtual === link.href;
+
+        return `
+            <a href="${link.href}"
+               class="${ativa ? "ativa" : ""}"
+               ${ativa ? 'aria-current="page"' : ""}>
+                ${link.texto}
+            </a>
+        `;
+    }).join("");
 }
 
-
-
-
-
-function reprovarArquivo(){
-    document.querySelectorAll(".reprovar-arquivo").forEach(icon => {
-        icon.addEventListener('click', async()=>{
-            const fileId = icon.getAttribute('data-id');
-            try{
-                const response = await fetch(`/reprovar/${fileId}`, {
-                    method: 'PUT',
-                    credentials: "include"
-                })
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Arquivo reprovado");
-                window.location.reload();
-            }catch(error){
-                console.error("Falha em reprovar arquivo", error);
-            }
-        });
-    });
-}
-
-function aprovarArquivo(){
-    document.querySelectorAll(".aprovar-arquivo").forEach(icon =>{
-        icon.addEventListener('click', async() => {
-            const fileId = icon.getAttribute('data-id');
-            try{
-                const response = await fetch(`/aprovar/${fileId}`, {
-                    method: 'PUT',
-                    credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Arquivo aprovado com sucesso!");
-                window.location.reload();
-            }catch(error){
-                console.error("Falha em aprovar arquivo", error);
-            }
-        });
-    });
-}
-
-function deletarArquivo(){
-    document.querySelectorAll(".deletar-arquivo").forEach(icon => {
-        icon.addEventListener('click', async() =>{
-            const fileId = icon.getAttribute('data-id');
-            try{
-                const response = await fetch(`/deletar/${fileId}`,{
-                    method:'DELETE',
-                    credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Arquivo deletado!");
-                window.location.reload();
-            }catch(error){
-                console.error("Falha em deletar arquivo", error);
-            }
-
-        })
-        
-    })
-}
 
 function downloadArquivo(){
     document.querySelectorAll(".botao-download").forEach(icon =>{
@@ -200,143 +166,17 @@ function visualizarArquivo(){
     });
 }
 
+function alternarDescricao(id) {
+    const trDescricao = document.getElementById(`descricao-${id}`);
+    const iconeSeta = document.getElementById(`seta-${id}`);
 
-
-function suspenderUsuario(){
-    document.querySelectorAll(".botao-suspender-usuario").forEach(button => {
-        button.addEventListener('click', async () =>{
-            const userId = button.getAttribute('data-id');
-            try{
-                const response = await fetch(`/suspender/${userId}`, {
-                    method: 'PUT',
-                    credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Usuário(a) suspenso");
-                window.location.reload();
-
-            }catch(error){
-                console.error("Falha em suspender usuário", error);
-            }
-        })
-    })
-}
-
-function retirarSuspensao(){
-    document.querySelectorAll(".retirar-suspensao").forEach(button => {
-        button.addEventListener('click', async() =>{
-            const userId = button.getAttribute('data-id');
-            try{
-                const response = await fetch(`/retirar-suspensao/${userId}`, {
-                    method: 'PUT',
-                    credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Suspensão retirada");
-                window.location.reload();
-
-            }catch(error){
-                console.error("Falha em retirar a suspensão do usuário", error);
-            }
-        })
-    })
-}
-
-
-
-
-
-
-
-
-function ativarPromocaoUsuarios(){
-    document.querySelectorAll('.botao-tornar-usuario-moderador').forEach(button =>{
-        button.addEventListener('click', async () =>{
-            const userId = button.getAttribute('data-id');
-            try{
-                const response = await fetch(`/promover/${userId}`, {
-                    method: "PUT",
-                    credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Usuário(a) promovido com sucesso");
-                window.location.reload();
-            }catch(error){
-                console.error("Falha em promover usuário para moderador", error);
-            }
-        });
-    });
-}
-
-function ativarDesligamentoModerador(){
-    document.querySelectorAll('.botao-retirar-papel-moderador').forEach(button =>{
-        button.addEventListener('click', async () =>{
-            const userId = button.getAttribute('data-id');
-            try{
-                const response = await fetch(`/retirar-papel/${userId}`, {
-                   method: 'PUT',
-                   credentials: "include"
-                });
-                if(!response.ok){
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                alert("Papel de moderador retirado do usuário com sucesso");
-                window.location.reload();
-            }catch(error){
-                console.error("Erro em retirar papel do moderador", error);
-            }
-        })
-    });
-}
-
-
-
-function fazerUploadArquivo(){
-    const upload = document.getElementById("confirmar");
-    upload.addEventListener("click", async () =>{
-        try{
-            let arquivo = document.getElementById("arquivo");
-            let nomeArquivo = document.getElementById("nome-arquivo");
-            let disciplina = document.getElementById("disciplina");
-            let descricao = document.getElementById("descricao-arquivo");
-
-            const formData = new FormData;
-            formData.append("file", arquivo.files[0]);
-            formData.append("nome", nomeArquivo.value);
-            formData.append("disciplina", disciplina.value);
-            formData.append("descricao", descricao.value);
-            const response = await fetch(`/upload`, {
-               method: 'POST',
-                credentials: "include",
-                body: formData
-            });
-            console.log(response.status);
-            if(response.status === 401){
-                alert("Não é possível realizar upload. Motivo: sua conta está suspensa");
-                window.location.reload();
-            }
-            else if(!response.ok){
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            else {
-                arquivo.value = '';
-                nomeArquivo.value = '';
-                disciplina.value = '';
-                descricao.value = '';
-                alert("Arquivo enviado para avaliação");
-                window.location.reload();
-            }
-
-        }catch (error){
-            console.error("Erro em realizar upload de arquivo", error);
+    if (trDescricao) {
+        if (trDescricao.style.display === "none") {
+            trDescricao.style.display = "table-row";
+            if (iconeSeta) iconeSeta.style.transform = "rotate(90deg)";
+        } else {
+            trDescricao.style.display = "none";
+            if (iconeSeta) iconeSeta.style.transform = "rotate(0deg)";
         }
-    });
+    }
 }
-
-fazerUploadArquivo();

@@ -1,6 +1,5 @@
 package com.example.repositorio_universitario.controller;
 
-import ch.qos.logback.core.model.Model;
 import com.example.repositorio_universitario.Enums.FuncaoUsuario;
 import com.example.repositorio_universitario.authentification.CustomOAuth2User;
 import com.example.repositorio_universitario.domain.Usuario;
@@ -8,23 +7,19 @@ import com.example.repositorio_universitario.repository.UsuarioRepository;
 import com.example.repositorio_universitario.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
+import com.example.repositorio_universitario.service.HistoricoService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class UsuarioController {
@@ -34,6 +29,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private HistoricoService historicoService;
 
 
     @GetMapping("/usuario-logado")
@@ -78,28 +76,140 @@ public class UsuarioController {
     }
 
     @PutMapping("/promover/{id}")
-    public void promoverUsuarioParaModerador(@PathVariable("id") Integer id) {
+    @Transactional
+    public ResponseEntity<Void> promoverUsuarioParaModerador(
+            @PathVariable("id") Integer id,
+            @AuthenticationPrincipal CustomOAuth2User autenticado) {
+
+        Usuario responsavel = obterResponsavel(autenticado);
+        exigirFuncao(responsavel, FuncaoUsuario.ADMINISTRADOR);
+
         Usuario usuario = usuarioService.buscarPorId(id);
-        usuario.setFuncao(FuncaoUsuario.MODERADOR);
-        usuarioRepository.save(usuario);
+
+        if (usuario.getFuncao() != FuncaoUsuario.MODERADOR) {
+            usuario.setFuncao(FuncaoUsuario.MODERADOR);
+            usuarioRepository.save(usuario);
+
+            historicoService.registrarAcaoUsuario(
+                    "CONCESSAO_PAPEL", usuario, responsavel);
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/retirar-papel/{id}")
-    public void retirarPapel(@PathVariable("id") Integer id) {
+    @Transactional
+    public ResponseEntity<Void> retirarPapel(
+            @PathVariable("id") Integer id,
+            @AuthenticationPrincipal CustomOAuth2User autenticado) {
+
+        Usuario responsavel = obterResponsavel(autenticado);
+        exigirFuncao(responsavel, FuncaoUsuario.ADMINISTRADOR);
+
         Usuario usuario = usuarioService.buscarPorId(id);
-        usuario.setFuncao(FuncaoUsuario.USUARIO);
-        usuarioRepository.save(usuario);
+
+        if (usuario.getFuncao() == FuncaoUsuario.MODERADOR) {
+            usuario.setFuncao(FuncaoUsuario.USUARIO);
+            usuarioRepository.save(usuario);
+
+            historicoService.registrarAcaoUsuario(
+                    "REMOCAO_PAPEL", usuario, responsavel);
+        }
+
+        return ResponseEntity.noContent().build();
     }
+
     @PutMapping("/suspender/{id}")
-    public void suspenderUsuario(@PathVariable ("id") Integer id){
+    @Transactional
+    public ResponseEntity<Void> suspenderUsuario(
+            @PathVariable("id") Integer id,
+            @AuthenticationPrincipal CustomOAuth2User autenticado) {
+
+        Usuario responsavel = obterResponsavel(autenticado);
+        exigirFuncao(responsavel, FuncaoUsuario.MODERADOR);
+
+        if (responsavel.getId().equals(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Você não pode suspender a sua própria conta."
+            );
+        }
+
         Usuario usuario = usuarioService.buscarPorId(id);
-        usuario.setSuspenso(true);
-        usuarioRepository.save(usuario);
+
+        if (usuario.getFuncao() == FuncaoUsuario.ADMINISTRADOR) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Não é permitido suspender um Administrador."
+            );
+        }
+
+        if (responsavel.getFuncao() == FuncaoUsuario.MODERADOR
+                && usuario.getFuncao() == FuncaoUsuario.MODERADOR) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Moderadores não podem suspender outros Moderadores."
+            );
+        }
+
+        if (!usuario.isSuspenso()) {
+            usuario.setSuspenso(true);
+            usuarioRepository.save(usuario);
+
+            historicoService.registrarAcaoUsuario(
+                    "SUSPENSAO", usuario, responsavel);
+        }
+
+        return ResponseEntity.noContent().build();
     }
+
     @PutMapping("/retirar-suspensao/{id}")
-    public void retirarSuspensão(@PathVariable ("id") Integer id){
+    @Transactional
+    public ResponseEntity<Void> retirarSuspensao(
+            @PathVariable("id") Integer id,
+            @AuthenticationPrincipal CustomOAuth2User autenticado) {
+
+        Usuario responsavel = obterResponsavel(autenticado);
+        exigirFuncao(responsavel, FuncaoUsuario.MODERADOR);
+
         Usuario usuario = usuarioService.buscarPorId(id);
-        usuario.setSuspenso(false);
-        usuarioRepository.save(usuario);
+
+        if (usuario.isSuspenso()) {
+            usuario.setSuspenso(false);
+            usuarioRepository.save(usuario);
+
+            historicoService.registrarAcaoUsuario(
+                    "RETIRADA_SUSPENSAO", usuario, responsavel);
+        }
+
+        return ResponseEntity.noContent().build();
     }
+
+    private Usuario obterResponsavel(CustomOAuth2User autenticado) {
+        if (autenticado == null || autenticado.getEmail() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Usuário não autenticado"
+            );
+        }
+
+        return usuarioRepository.findByEmail(autenticado.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Usuário não encontrado"
+                ));
+    }
+
+    private void exigirFuncao(
+            Usuario usuario,
+            FuncaoUsuario funcaoNecessaria) {
+
+        if (usuario.getFuncao() != funcaoNecessaria) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Você não tem permissão para realizar esta operação"
+            );
+        }
+    }
+
 }
